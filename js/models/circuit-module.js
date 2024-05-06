@@ -43,7 +43,7 @@
     return Member;
   })();
 
-  CircuitModule.OrderModule = function(members) {
+  CircuitModule.PlayBuildModule = function(members) {
     return new CircuitModule(members.reduce(function(ret, member) {
       ret[member.name] = new CircuitModule.Member(member);
       return ret;

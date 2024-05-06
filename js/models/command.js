@@ -66,7 +66,7 @@
       var tokens = tokenize(s);
       var nodes = makeNodes(tokens);
       if (!isValidNodes(nodes)) {
-        throw new SyntaxError('OrderScript parse error: Unexpected identifier "' +  s + '"');
+        throw new SyntaxError('PlayBuildScript parse error: Unexpected identifier "' +  s + '"');
       }
       return makeArgs(nodes);
     };

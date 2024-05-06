@@ -34,12 +34,12 @@
 </head>
 <body>
   <button id="button"></button>
-  <script src="/js/order-module.js"></script>
+  <script src="/js/playbuild-module.js"></script>
   <script>
     (function() {
       var buttonElement = document.getElementById('button');
 
-      var module = new order.Module([
+      var module = new playbuild.Module([
         { name: 'click', type: 'event' },
       ]);
 
@@ -47,7 +47,7 @@
         module.get('click')();
       });
 
-      order.exports = module;
+      playbuild.exports = module;
     })();
   </script>
 </body>

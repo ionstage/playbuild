@@ -43,7 +43,7 @@
     }
     return dom.ajax({
       type: 'GET',
-      url: 'order_scripts/' + path,
+      url: 'playbuild_scripts/' + path,
     }).then(function(text) {
       return {
         text: text,

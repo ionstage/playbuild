@@ -28,11 +28,11 @@
 
   Environment.prototype.fetchMember = function(variableName, memberName) {
     if (!this.variableTable.hasOwnProperty(variableName)) {
-      throw new Error('OrderScript runtime error: variable "' + variableName + '" is not defined');
+      throw new Error('PlayBuildScript runtime error: variable "' + variableName + '" is not defined');
     }
     var member = this.variableTable[variableName].circuitModule.get(memberName);
     if (!member) {
-      throw new Error('OrderScript runtime error: member "' + variableName + '.' + memberName + '" is not defined');
+      throw new Error('PlayBuildScript runtime error: member "' + variableName + '.' + memberName + '" is not defined');
     }
     return member;
   };
@@ -40,7 +40,7 @@
   Environment.prototype.loadVariable = function(name, moduleName) {
     return this.circuitModuleLoader(name, moduleName).then(function(circuitModule) {
       if (!circuitModule) {
-        throw new Error('OrderScript runtime error: Invalid circuit module');
+        throw new Error('PlayBuildScript runtime error: Invalid circuit module');
       }
       this.variableTable[name] = new Environment.Variable({
         name: name,
@@ -69,7 +69,7 @@
 
   Environment.prototype.bind = function(sourceMember, targetMember) {
     if (this.findBinding(sourceMember, targetMember)) {
-      throw new Error('OrderScript runtime error: Already bound');
+      throw new Error('PlayBuildScript runtime error: Already bound');
     }
     CircuitModule.bind(sourceMember, targetMember);
     this.bindings.push(new Environment.Binding({
@@ -81,7 +81,7 @@
   Environment.prototype.unbind = function(sourceMember, targetMember) {
     var binding = this.findBinding(sourceMember, targetMember);
     if (!binding) {
-      throw new Error('OrderScript runtime error: Not bound');
+      throw new Error('PlayBuildScript runtime error: Not bound');
     }
     CircuitModule.unbind(sourceMember, targetMember);
     helper.remove(this.bindings, binding);
@@ -127,7 +127,7 @@
   Environment.EXEC_TABLE = {
     new: function(variableName, moduleName) {
       if (this.variableTable.hasOwnProperty(variableName)) {
-        throw new Error('OrderScript runtime error: variable "' + variableName + '" is already defined');
+        throw new Error('PlayBuildScript runtime error: variable "' + variableName + '" is already defined');
       }
       return this.loadVariable(variableName, moduleName);
     },
@@ -146,7 +146,7 @@
     },
     delete: function(variableName) {
       if (!this.variableTable.hasOwnProperty(variableName)) {
-        throw new Error('OrderScript runtime error: variable "' + variableName + '" is not defined');
+        throw new Error('PlayBuildScript runtime error: variable "' + variableName + '" is not defined');
       }
       return this.unloadVariable(variableName);
     },

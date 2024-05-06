@@ -2,9 +2,9 @@ var assert = require('assert');
 var sinon = require('sinon');
 var CircuitModule = require('../js/models/circuit-module.js');
 
-describe('CircuitModule.OrderModule', function() {
+describe('CircuitModule.PlayBuildModule', function() {
   it('has members without value', function() {
-    var m = new CircuitModule.OrderModule([
+    var m = new CircuitModule.PlayBuildModule([
       { name: 'a', type: 'prop' },
       { name: 'b', type: 'event' },
     ]);
@@ -17,7 +17,7 @@ describe('CircuitModule.OrderModule', function() {
   });
 
   it('has prop members with value', function() {
-    var m = new CircuitModule.OrderModule([{ name: 'a', type: 'prop', arg: 1 }]);
+    var m = new CircuitModule.PlayBuildModule([{ name: 'a', type: 'prop', arg: 1 }]);
     var a = m.get('a');
     assert.equal(a(), 1);
     a(2);
@@ -26,7 +26,7 @@ describe('CircuitModule.OrderModule', function() {
 
   it('has event members with listener', function() {
     var l = sinon.spy();
-    var m = new CircuitModule.OrderModule([{ name: 'a', type: 'event', arg: l }]);
+    var m = new CircuitModule.PlayBuildModule([{ name: 'a', type: 'event', arg: l }]);
     var a = m.get('a');
     a();
     assert(l.calledOnce);
@@ -35,7 +35,7 @@ describe('CircuitModule.OrderModule', function() {
   it('should make the latter member definition a priority', function() {
     var l0 = sinon.spy();
     var l1 = sinon.spy();
-    var m = new CircuitModule.OrderModule([
+    var m = new CircuitModule.PlayBuildModule([
       { name: 'a', type: 'prop', arg: 1 },
       { name: 'b', type: 'event', arg: l0 },
       { name: 'a', type: 'prop', arg: 2 },
@@ -50,8 +50,8 @@ describe('CircuitModule.OrderModule', function() {
   });
 
   it('bind members', function() {
-    var m0 = new CircuitModule.OrderModule([{ name: 'a', type: 'prop' }]);
-    var m1 = new CircuitModule.OrderModule([{ name: 'b', type: 'prop' }]);
+    var m0 = new CircuitModule.PlayBuildModule([{ name: 'a', type: 'prop' }]);
+    var m1 = new CircuitModule.PlayBuildModule([{ name: 'b', type: 'prop' }]);
     var a = m0.get('a');
     var b = m1.get('b');
     CircuitModule.bind(a, b);
@@ -60,8 +60,8 @@ describe('CircuitModule.OrderModule', function() {
   });
 
   it('unbind members', function() {
-    var m0 = new CircuitModule.OrderModule([{ name: 'a', type: 'prop' }]);
-    var m1 = new CircuitModule.OrderModule([{ name: 'b', type: 'prop' }]);
+    var m0 = new CircuitModule.PlayBuildModule([{ name: 'a', type: 'prop' }]);
+    var m1 = new CircuitModule.PlayBuildModule([{ name: 'b', type: 'prop' }]);
     var a = m0.get('a');
     var b = m1.get('b');
     CircuitModule.bind(a, b);

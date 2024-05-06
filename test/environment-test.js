@@ -6,7 +6,7 @@ var Environment = require('../js/models/environment.js');
 function TestEnvironment(props) {
   return new Environment(Object.assign({
     circuitModuleLoader: function() {
-      return Promise.resolve(new CircuitModule.OrderModule([]));
+      return Promise.resolve(new CircuitModule.PlayBuildModule([]));
     },
     circuitModuleUnloader: function() {
       return Promise.resolve();
@@ -28,7 +28,7 @@ describe('Environment', function() {
     });
 
     it('create new variable', function() {
-      var m = new CircuitModule.OrderModule([]);
+      var m = new CircuitModule.PlayBuildModule([]);
       var f = sinon.spy(function() { return Promise.resolve(m); });
       var env = TestEnvironment({ circuitModuleLoader: f });
       return env.exec(':new x Module').then(function() {
@@ -64,7 +64,7 @@ describe('Environment', function() {
     it('bind circuit module members', function() {
       var env = TestEnvironment({
         circuitModuleLoader: function() {
-          return Promise.resolve(new CircuitModule.OrderModule([
+          return Promise.resolve(new CircuitModule.PlayBuildModule([
             { name: 'a', type: 'prop' },
             { name: 'b', type: 'prop' },
           ]));
@@ -86,7 +86,7 @@ describe('Environment', function() {
     it('unbind circuit module members', function() {
       var env = TestEnvironment({
         circuitModuleLoader: function() {
-          return Promise.resolve(new CircuitModule.OrderModule([
+          return Promise.resolve(new CircuitModule.PlayBuildModule([
             { name: 'a', type: 'prop' },
             { name: 'b', type: 'prop' },
           ]));
@@ -109,7 +109,7 @@ describe('Environment', function() {
     it('send data to a member of circuit module', function() {
       var env = TestEnvironment({
         circuitModuleLoader: function() {
-          return Promise.resolve(new CircuitModule.OrderModule([
+          return Promise.resolve(new CircuitModule.PlayBuildModule([
             { name: 'a', type: 'prop' },
           ]));
         },
@@ -138,7 +138,7 @@ describe('Environment', function() {
     it('unbind all circuit module members on deleting variable', function() {
       var env = TestEnvironment({
         circuitModuleLoader: function(variableName, moduleName) {
-          return Promise.resolve(new CircuitModule.OrderModule([
+          return Promise.resolve(new CircuitModule.PlayBuildModule([
             { name: 'a', type: 'prop' },
             { name: 'b', type: 'prop' },
           ]));
@@ -195,7 +195,7 @@ describe('Environment', function() {
       var f = sinon.spy(function() {
         return Promise.resolve({
           text: ':new x Module',
-          fileName: 'test.os',
+          fileName: 'test.pb',
         });
       });
       var env = TestEnvironment({ scriptLoader: f });

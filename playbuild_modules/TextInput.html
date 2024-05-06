@@ -21,7 +21,7 @@
 </head>
 <body>
   <input id="text-input" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false">
-  <script src="/js/order-module.js"></script>
+  <script src="/js/playbuild-module.js"></script>
   <script>
     (function() {
       var text = '';
@@ -39,7 +39,7 @@
         },
       };
 
-      var module = new order.Module([
+      var module = new playbuild.Module([
         { name: 'text', type: 'prop', arg: props.text },
         { name: 'change', type: 'event' },
       ]);
@@ -55,7 +55,7 @@
 
       textInputElement.value = text;
 
-      order.exports = module;
+      playbuild.exports = module;
     })();
   </script>
 </body>

@@ -19,7 +19,7 @@
   };
 
   Variable.prototype.contentUrl = function() {
-    return 'order_modules/' + encodeURI(this.moduleName()) + '.html';
+    return 'playbuild_modules/' + encodeURI(this.moduleName()) + '.html';
   };
 
   Variable.prototype.circuitModule = function() {
@@ -57,13 +57,13 @@
     };
 
     Content.prototype.circuitModule = function() {
-      var order = this.contentWindow().order;
-      return (order && order.exports);
+      var playbuild = this.contentWindow().playbuild;
+      return (playbuild && playbuild.exports);
     };
 
     Content.prototype.load = function(url) {
       return new Promise(function(resolve, reject) {
-        var timeoutID = setTimeout(reject, 30 * 1000, new Error('OrderScript runtime error: Load timeout for content'));
+        var timeoutID = setTimeout(reject, 30 * 1000, new Error('PlayBuildScript runtime error: Load timeout for content'));
         dom.once(this.element(), 'load', function() {
           clearTimeout(timeoutID);
           resolve(this.circuitModule());
@@ -71,7 +71,7 @@
         dom.attr(this.element(), { src: url });
       }.bind(this)).then(function(circuitModule) {
         if (!circuitModule) {
-          throw new Error('OrderScript runtime error: Invalid circuit module');
+          throw new Error('PlayBuildScript runtime error: Invalid circuit module');
         }
         dom.css(this.element(), { height: dom.contentHeight(this.element()) + 'px' });
       }.bind(this));

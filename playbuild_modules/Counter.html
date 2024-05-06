@@ -26,7 +26,7 @@
 </head>
 <body>
   <div id="content"></div>
-  <script src="/js/order-module.js"></script>
+  <script src="/js/playbuild-module.js"></script>
   <script>
     (function() {
       var count = 0;
@@ -52,7 +52,7 @@
         },
       };
 
-      var module = new order.Module([
+      var module = new playbuild.Module([
         { name: 'count', type: 'prop', arg: props.count },
         { name: 'up', type: 'event', arg: events.up },
         { name: 'reset', type: 'event', arg: events.reset },
@@ -60,7 +60,7 @@
 
       contentElement.textContent = count;
 
-      order.exports = module;
+      playbuild.exports = module;
     })();
   </script>
 </body>
