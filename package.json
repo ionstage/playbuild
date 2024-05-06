@@ -7,7 +7,6 @@
     "build:css": "cat css/*.css | cleancss -o build/css/app.min.css",
     "build:js": "browserify js/app.js --no-bundle-external | uglifyjs -o build/js/app.min.js -c -m",
     "bundle": "browserify -r circuit -r es6-promise -r file-saver -r jcore -o js/bundle.js",
-    "start": "browser-sync start --files='index.html, css/**/*.css, js/**/*.js' --server",
     "test": "mocha"
   },
   "dependencies": {
@@ -17,7 +16,6 @@
     "jcore": "^0.3.1"
   },
   "devDependencies": {
-    "browser-sync": "^2.24.5",
     "browserify": "^16.2.2",
     "clean-css-cli": "^4.1.11",
     "mocha": "^5.2.0",
