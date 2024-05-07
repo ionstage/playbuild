@@ -60,7 +60,7 @@ describe('Command', () => {
       [':send x.member0 "<<"', ['send', 'x', 'member0', '<<']],
     ].forEach(function(p) {
       it('"' + p[0] + '"', () => {
-        assert.deepEqual(Command.parse(p[0]), p[1]);
+        assert.deepStrictEqual(Command.parse(p[0]), p[1]);
       });
     });
   });

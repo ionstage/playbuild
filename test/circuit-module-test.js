@@ -10,18 +10,18 @@ describe('CircuitModule.PlayBuildModule', () => {
     ]);
     const a = m.get('a');
     const b = m.get('b');
-    assert.equal(a.name, 'a');
-    assert.equal(b.name, 'b');
-    assert(typeof a() === 'undefined');
-    assert(typeof b() === 'undefined');
+    assert.strictEqual(a.name, 'a');
+    assert.strictEqual(b.name, 'b');
+    assert.strictEqual(typeof a(), 'undefined');
+    assert.strictEqual(typeof b(), 'undefined');
   });
 
   it('has prop members with value', () => {
     const m = new CircuitModule.PlayBuildModule([{ name: 'a', type: 'prop', arg: 1 }]);
     const a = m.get('a');
-    assert.equal(a(), 1);
+    assert.strictEqual(a(), 1);
     a(2);
-    assert.equal(a(), 2);
+    assert.strictEqual(a(), 2);
   });
 
   it('has event members with listener', () => {
@@ -29,7 +29,7 @@ describe('CircuitModule.PlayBuildModule', () => {
     const m = new CircuitModule.PlayBuildModule([{ name: 'a', type: 'event', arg: l }]);
     const a = m.get('a');
     a();
-    assert.equal(l.mock.callCount(), 1);
+    assert.strictEqual(l.mock.callCount(), 1);
   });
 
   it('should make the latter member definition a priority', () => {
@@ -43,10 +43,10 @@ describe('CircuitModule.PlayBuildModule', () => {
     ]);
     const a = m.get('a');
     const b = m.get('b');
-    assert.equal(a(), 2);
+    assert.strictEqual(a(), 2);
     b();
-    assert.equal(l0.mock.callCount(), 0);
-    assert.equal(l1.mock.callCount(), 1);
+    assert.strictEqual(l0.mock.callCount(), 0);
+    assert.strictEqual(l1.mock.callCount(), 1);
   });
 
   it('bind members', () => {
@@ -56,7 +56,7 @@ describe('CircuitModule.PlayBuildModule', () => {
     const b = m1.get('b');
     CircuitModule.bind(a, b);
     a(0);
-    assert.equal(b(), 0);
+    assert.strictEqual(b(), 0);
   });
 
   it('unbind members', () => {
@@ -68,6 +68,6 @@ describe('CircuitModule.PlayBuildModule', () => {
     a(0);
     CircuitModule.unbind(a, b);
     a(1);
-    assert.equal(b(), 0);
+    assert.strictEqual(b(), 0);
   });
 });
