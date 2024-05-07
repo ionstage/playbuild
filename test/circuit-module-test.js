@@ -1,5 +1,5 @@
-var assert = require('assert');
-var sinon = require('sinon');
+var assert = require('node:assert');
+var { describe, it, mock } = require('node:test');
 var CircuitModule = require('../js/models/circuit-module.js');
 
 describe('CircuitModule.PlayBuildModule', function() {
@@ -25,16 +25,16 @@ describe('CircuitModule.PlayBuildModule', function() {
   });
 
   it('has event members with listener', function() {
-    var l = sinon.spy();
+    var l = mock.fn();
     var m = new CircuitModule.PlayBuildModule([{ name: 'a', type: 'event', arg: l }]);
     var a = m.get('a');
     a();
-    assert(l.calledOnce);
+    assert.equal(l.mock.callCount(), 1);
   });
 
   it('should make the latter member definition a priority', function() {
-    var l0 = sinon.spy();
-    var l1 = sinon.spy();
+    var l0 = mock.fn();
+    var l1 = mock.fn();
     var m = new CircuitModule.PlayBuildModule([
       { name: 'a', type: 'prop', arg: 1 },
       { name: 'b', type: 'event', arg: l0 },
@@ -45,8 +45,8 @@ describe('CircuitModule.PlayBuildModule', function() {
     var b = m.get('b');
     assert.equal(a(), 2);
     b();
-    assert(l0.notCalled);
-    assert(l1.calledOnce);
+    assert.equal(l0.mock.callCount(), 0);
+    assert.equal(l1.mock.callCount(), 1);
   });
 
   it('bind members', function() {

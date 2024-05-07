@@ -1,4 +1,5 @@
-var assert = require('assert');
+var assert = require('node:assert');
+var { describe, it } = require('node:test');
 var Command = require('../js/models/command.js');
 
 describe('Command', function() {

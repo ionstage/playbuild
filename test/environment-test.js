@@ -1,5 +1,5 @@
-var assert = require('assert');
-var sinon = require('sinon');
+var assert = require('node:assert');
+var { describe, it, mock } = require('node:test');
 var CircuitModule = require('../js/models/circuit-module.js');
 var Environment = require('../js/models/environment.js');
 
@@ -29,14 +29,15 @@ describe('Environment', function() {
 
     it('create new variable', function() {
       var m = new CircuitModule.PlayBuildModule([]);
-      var f = sinon.spy(function() { return Promise.resolve(m); });
+      var f = mock.fn(function() { return Promise.resolve(m); });
       var env = TestEnvironment({ circuitModuleLoader: f });
       return env.exec(':new x Module').then(function() {
         var x = env.variableTable.x;
         assert.equal(x.name, 'x');
         assert.equal(x.moduleName, 'Module');
         assert.equal(x.circuitModule, m);
-        assert(f.calledWith('x', 'Module'));
+        assert.equal(f.mock.calls[0].arguments[0], 'x');
+        assert.equal(f.mock.calls[0].arguments[1], 'Module');
       });
     });
 
@@ -70,7 +71,7 @@ describe('Environment', function() {
           ]));
         },
       });
-      CircuitModule.bind = sinon.spy(CircuitModule.bind);
+      CircuitModule.bind = mock.fn(CircuitModule.bind);
       return env.exec([
         ':new x Module',
         ':new y Module',
@@ -78,7 +79,8 @@ describe('Environment', function() {
       ]).then(function() {
         var a = env.variableTable.x.circuitModule.get('a');
         var b = env.variableTable.y.circuitModule.get('b');
-        assert(CircuitModule.bind.calledWith(a, b));
+        assert.equal(CircuitModule.bind.mock.calls[0].arguments[0], a);
+        assert.equal(CircuitModule.bind.mock.calls[0].arguments[1], b);
         assert.equal(env.bindings.length, 1);
       });
     });
@@ -92,7 +94,7 @@ describe('Environment', function() {
           ]));
         },
       });
-      CircuitModule.unbind = sinon.spy(CircuitModule.unbind);
+      CircuitModule.unbind = mock.fn(CircuitModule.unbind);
       return env.exec([
         ':new x Module',
         ':new y Module',
@@ -101,7 +103,8 @@ describe('Environment', function() {
       ]).then(function() {
         var a = env.variableTable.x.circuitModule.get('a');
         var b = env.variableTable.y.circuitModule.get('b');
-        assert(CircuitModule.unbind.calledWith(a, b));
+        assert(CircuitModule.unbind.mock.calls[0].arguments[0], a);
+        assert(CircuitModule.unbind.mock.calls[0].arguments[1], b);
         assert.equal(env.bindings.length, 0);
       });
     });
@@ -124,14 +127,14 @@ describe('Environment', function() {
     });
 
     it('delete variable', function() {
-      var f = sinon.spy(function() { return Promise.resolve(); });
+      var f = mock.fn(function() { return Promise.resolve(); });
       var env = TestEnvironment({ circuitModuleUnloader: f });
       return env.exec([
         ':new x Module',
         ':delete x',
       ]).then(function() {
         assert.equal(Object.keys(env.variableTable).length, 0);
-        assert(f.calledOnce);
+        assert.equal(f.mock.callCount(), 1);
       });
     });
 
@@ -145,7 +148,7 @@ describe('Environment', function() {
         },
       });
       var x, y, z;
-      CircuitModule.unbind = sinon.spy(CircuitModule.unbind);
+      CircuitModule.unbind = mock.fn(CircuitModule.unbind);
       return env.exec([
         ':new x Module',
         ':new y Module',
@@ -162,24 +165,24 @@ describe('Environment', function() {
         z = env.variableTable.z;
         return env.exec(':delete y');
       }).then(function() {
-        var args = CircuitModule.unbind.args;
-        assert.equal(args[0][0], x.circuitModule.get('a'));
-        assert.equal(args[0][1], y.circuitModule.get('a'));
-        assert.equal(args[1][0], x.circuitModule.get('b'));
-        assert.equal(args[1][1], y.circuitModule.get('a'));
-        assert.equal(args[2][0], y.circuitModule.get('a'));
-        assert.equal(args[2][1], z.circuitModule.get('a'));
-        assert.equal(args[3][0], y.circuitModule.get('a'));
-        assert.equal(args[3][1], z.circuitModule.get('b'));
-        assert.equal(args[4][0], x.circuitModule.get('b'));
-        assert.equal(args[4][1], y.circuitModule.get('b'));
-        assert.equal(args[5][0], y.circuitModule.get('b'));
-        assert.equal(args[5][1], z.circuitModule.get('b'));
+        var calls = CircuitModule.unbind.mock.calls;
+        assert.equal(calls[0].arguments[0], x.circuitModule.get('a'));
+        assert.equal(calls[0].arguments[1], y.circuitModule.get('a'));
+        assert.equal(calls[1].arguments[0], x.circuitModule.get('b'));
+        assert.equal(calls[1].arguments[1], y.circuitModule.get('a'));
+        assert.equal(calls[2].arguments[0], y.circuitModule.get('a'));
+        assert.equal(calls[2].arguments[1], z.circuitModule.get('a'));
+        assert.equal(calls[3].arguments[0], y.circuitModule.get('a'));
+        assert.equal(calls[3].arguments[1], z.circuitModule.get('b'));
+        assert.equal(calls[4].arguments[0], x.circuitModule.get('b'));
+        assert.equal(calls[4].arguments[1], y.circuitModule.get('b'));
+        assert.equal(calls[5].arguments[0], y.circuitModule.get('b'));
+        assert.equal(calls[5].arguments[1], z.circuitModule.get('b'));
       });
     });
 
     it('reset', function() {
-      var f = sinon.spy(function() { return Promise.resolve(); });
+      var f = mock.fn(function() { return Promise.resolve(); });
       var env = TestEnvironment({ circuitModuleUnloader: f });
       return env.exec([
         ':new x Module',
@@ -187,12 +190,12 @@ describe('Environment', function() {
         ':reset',
       ]).then(function() {
         assert.equal(Object.keys(env.variableTable).length, 0);
-        assert(f.calledTwice);
+        assert(f.mock.callCount(), 2);
       });
     });
 
     it('load command', function() {
-      var f = sinon.spy(function() {
+      var f = mock.fn(function() {
         return Promise.resolve({
           text: ':new x Module',
           fileName: 'test.pb',
@@ -201,18 +204,19 @@ describe('Environment', function() {
       var env = TestEnvironment({ scriptLoader: f });
       return env.exec(':load /path/to/script').then(function() {
         assert(env.variableTable.hasOwnProperty('x'));
-        assert(f.calledWith('/path/to/script'));
+        assert.equal(f.mock.calls[0].arguments[0], '/path/to/script');
       });
     });
 
     it('save command', function() {
-      var f = sinon.spy(function() { return Promise.resolve(); });
+      var f = mock.fn(function() { return Promise.resolve(); });
       var env = TestEnvironment({ scriptSaver: f });
       return env.exec([
         ':new x Module',
         ':save /path/to/script',
       ]).then(function() {
-        assert(f.calledWith('/path/to/script', 'x:Module\n'));
+        assert.equal(f.mock.calls[0].arguments[0], '/path/to/script');
+        assert.equal(f.mock.calls[0].arguments[1], 'x:Module\n');
       });
     });
   });
