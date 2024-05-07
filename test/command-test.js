@@ -58,7 +58,7 @@ describe('Command', () => {
       [' :reset ', ['reset']],
       [':send x.member0 ">>y.member1"', ['send', 'x', 'member0', '>>y.member1']],
       [':send x.member0 "<<"', ['send', 'x', 'member0', '<<']],
-    ].forEach(function(p) {
+    ].forEach(p => {
       it('"' + p[0] + '"', () => {
         assert.deepStrictEqual(Command.parse(p[0]), p[1]);
       });
@@ -101,11 +101,9 @@ describe('Command', () => {
       ':reset x',
       ':load x y',
       ':save x y',
-    ].forEach(function(p) {
+    ].forEach(p => {
       it('"' + p + '"', () => {
-        assert.throws(() => {
-          Command.parse(p);
-        }, SyntaxError);
+        assert.throws(() => Command.parse(p), SyntaxError);
       });
     });
   });

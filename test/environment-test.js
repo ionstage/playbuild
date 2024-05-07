@@ -5,18 +5,10 @@ const Environment = require('../js/models/environment.js');
 
 function TestEnvironment(props) {
   return new Environment(Object.assign({
-    circuitModuleLoader: () => {
-      return Promise.resolve(new CircuitModule.PlayBuildModule([]));
-    },
-    circuitModuleUnloader: () => {
-      return Promise.resolve();
-    },
-    scriptLoader: () => {
-      return Promise.resolve();
-    },
-    scriptSaver: () => {
-      return Promise.resolve();
-    },
+    circuitModuleLoader: () => Promise.resolve(new CircuitModule.PlayBuildModule([])),
+    circuitModuleUnloader: () => Promise.resolve(),
+    scriptLoader: () => Promise.resolve(),
+    scriptSaver: () => Promise.resolve(),
   }, props));
 }
 
@@ -27,42 +19,43 @@ describe('Environment', () => {
       return env.exec('');
     });
 
-    it('create new variable', () => {
+    it('create new variable', async () => {
       const m = new CircuitModule.PlayBuildModule([]);
-      const f = mock.fn(() => { return Promise.resolve(m); });
+      const f = mock.fn(() => Promise.resolve(m));
       const env = TestEnvironment({ circuitModuleLoader: f });
-      return env.exec(':new x Module').then(() => {
-        const x = env.variableTable.x;
-        assert.strictEqual(x.name, 'x');
-        assert.strictEqual(x.moduleName, 'Module');
-        assert.strictEqual(x.circuitModule, m);
-        assert.strictEqual(f.mock.calls[0].arguments[0], 'x');
-        assert.strictEqual(f.mock.calls[0].arguments[1], 'Module');
-      });
+      await env.exec(':new x Module');
+      const x = env.variableTable.x;
+      assert.strictEqual(x.name, 'x');
+      assert.strictEqual(x.moduleName, 'Module');
+      assert.strictEqual(x.circuitModule, m);
+      assert.strictEqual(f.mock.calls[0].arguments[0], 'x');
+      assert.strictEqual(f.mock.calls[0].arguments[1], 'Module');
     });
 
-    it('should not create variables with the same name', () => {
+    it('should not create variables with the same name', async () => {
       const env = TestEnvironment();
-      return env.exec([
-        ':new x Module',
-        ':new x Module',
-      ]).catch(function(e) {
+      try {
+        await env.exec([
+          ':new x Module',
+          ':new x Module',
+        ]);
+      } catch (e) {
         assert(e instanceof Error);
-      });
+      }
     });
 
-    it('should not set circuit module to null', () => {
+    it('should not set circuit module to null', async () => {
       const env = TestEnvironment({
-        circuitModuleLoader: () => {
-          return null;
-        },
+        circuitModuleLoader: () => null,
       });
-      return env.exec(':new x Module').catch(function(e) {
+      try {
+        await env.exec(':new x Module');
+      } catch (e) {
         assert(e instanceof Error);
-      });
+      }
     });
 
-    it('bind circuit module members', () => {
+    it('bind circuit module members', async () => {
       const env = TestEnvironment({
         circuitModuleLoader: () => {
           return Promise.resolve(new CircuitModule.PlayBuildModule([
@@ -72,20 +65,19 @@ describe('Environment', () => {
         },
       });
       CircuitModule.bind = mock.fn(CircuitModule.bind);
-      return env.exec([
+      await env.exec([
         ':new x Module',
         ':new y Module',
         ':bind x.a y.b',
-      ]).then(() => {
-        const a = env.variableTable.x.circuitModule.get('a');
-        const b = env.variableTable.y.circuitModule.get('b');
-        assert.strictEqual(CircuitModule.bind.mock.calls[0].arguments[0], a);
-        assert.strictEqual(CircuitModule.bind.mock.calls[0].arguments[1], b);
-        assert.strictEqual(env.bindings.length, 1);
-      });
+      ]);
+      const a = env.variableTable.x.circuitModule.get('a');
+      const b = env.variableTable.y.circuitModule.get('b');
+      assert.strictEqual(CircuitModule.bind.mock.calls[0].arguments[0], a);
+      assert.strictEqual(CircuitModule.bind.mock.calls[0].arguments[1], b);
+      assert.strictEqual(env.bindings.length, 1);
     });
 
-    it('unbind circuit module members', () => {
+    it('unbind circuit module members', async () => {
       const env = TestEnvironment({
         circuitModuleLoader: () => {
           return Promise.resolve(new CircuitModule.PlayBuildModule([
@@ -95,21 +87,20 @@ describe('Environment', () => {
         },
       });
       CircuitModule.unbind = mock.fn(CircuitModule.unbind);
-      return env.exec([
+      await env.exec([
         ':new x Module',
         ':new y Module',
         ':bind x.a y.b',
         ':unbind x.a y.b',
-      ]).then(() => {
-        const a = env.variableTable.x.circuitModule.get('a');
-        const b = env.variableTable.y.circuitModule.get('b');
-        assert(CircuitModule.unbind.mock.calls[0].arguments[0], a);
-        assert(CircuitModule.unbind.mock.calls[0].arguments[1], b);
-        assert.strictEqual(env.bindings.length, 0);
-      });
+      ]);
+      const a = env.variableTable.x.circuitModule.get('a');
+      const b = env.variableTable.y.circuitModule.get('b');
+      assert(CircuitModule.unbind.mock.calls[0].arguments[0], a);
+      assert(CircuitModule.unbind.mock.calls[0].arguments[1], b);
+      assert.strictEqual(env.bindings.length, 0);
     });
 
-    it('send data to a member of circuit module', () => {
+    it('send data to a member of circuit module', async () => {
       const env = TestEnvironment({
         circuitModuleLoader: () => {
           return Promise.resolve(new CircuitModule.PlayBuildModule([
@@ -117,30 +108,28 @@ describe('Environment', () => {
           ]));
         },
       });
-      return env.exec([
+      await env.exec([
         ':new x Module',
         ':send x.a data_text',
-      ]).then(() => {
-        const a = env.variableTable.x.circuitModule.get('a');
-        assert.strictEqual(a(), 'data_text');
-      });
+      ]);
+      const a = env.variableTable.x.circuitModule.get('a');
+      assert.strictEqual(a(), 'data_text');
     });
 
-    it('delete variable', () => {
-      const f = mock.fn(() => { return Promise.resolve(); });
+    it('delete variable', async () => {
+      const f = mock.fn(() => Promise.resolve());
       const env = TestEnvironment({ circuitModuleUnloader: f });
-      return env.exec([
+      await env.exec([
         ':new x Module',
         ':delete x',
-      ]).then(() => {
-        assert.strictEqual(Object.keys(env.variableTable).length, 0);
-        assert.strictEqual(f.mock.callCount(), 1);
-      });
+      ]);
+      assert.strictEqual(Object.keys(env.variableTable).length, 0);
+      assert.strictEqual(f.mock.callCount(), 1);
     });
 
-    it('unbind all circuit module members on deleting variable', () => {
+    it('unbind all circuit module members on deleting variable', async () => {
       const env = TestEnvironment({
-        circuitModuleLoader: function(variableName, moduleName) {
+        circuitModuleLoader: (variableName, moduleName) => {
           return Promise.resolve(new CircuitModule.PlayBuildModule([
             { name: 'a', type: 'prop' },
             { name: 'b', type: 'prop' },
@@ -149,7 +138,7 @@ describe('Environment', () => {
       });
       let x, y, z;
       CircuitModule.unbind = mock.fn(CircuitModule.unbind);
-      return env.exec([
+      await env.exec([
         ':new x Module',
         ':new y Module',
         ':new z Module',
@@ -159,42 +148,39 @@ describe('Environment', () => {
         ':bind y.a z.b',
         ':bind x.b y.b',
         ':bind y.b z.b',
-      ]).then(() => {
-        x = env.variableTable.x;
-        y = env.variableTable.y;
-        z = env.variableTable.z;
-        return env.exec(':delete y');
-      }).then(() => {
-        const calls = CircuitModule.unbind.mock.calls;
-        assert.strictEqual(calls[0].arguments[0], x.circuitModule.get('a'));
-        assert.strictEqual(calls[0].arguments[1], y.circuitModule.get('a'));
-        assert.strictEqual(calls[1].arguments[0], x.circuitModule.get('b'));
-        assert.strictEqual(calls[1].arguments[1], y.circuitModule.get('a'));
-        assert.strictEqual(calls[2].arguments[0], y.circuitModule.get('a'));
-        assert.strictEqual(calls[2].arguments[1], z.circuitModule.get('a'));
-        assert.strictEqual(calls[3].arguments[0], y.circuitModule.get('a'));
-        assert.strictEqual(calls[3].arguments[1], z.circuitModule.get('b'));
-        assert.strictEqual(calls[4].arguments[0], x.circuitModule.get('b'));
-        assert.strictEqual(calls[4].arguments[1], y.circuitModule.get('b'));
-        assert.strictEqual(calls[5].arguments[0], y.circuitModule.get('b'));
-        assert.strictEqual(calls[5].arguments[1], z.circuitModule.get('b'));
-      });
+      ]);
+      x = env.variableTable.x;
+      y = env.variableTable.y;
+      z = env.variableTable.z;
+      await env.exec(':delete y');
+      const calls = CircuitModule.unbind.mock.calls;
+      assert.strictEqual(calls[0].arguments[0], x.circuitModule.get('a'));
+      assert.strictEqual(calls[0].arguments[1], y.circuitModule.get('a'));
+      assert.strictEqual(calls[1].arguments[0], x.circuitModule.get('b'));
+      assert.strictEqual(calls[1].arguments[1], y.circuitModule.get('a'));
+      assert.strictEqual(calls[2].arguments[0], y.circuitModule.get('a'));
+      assert.strictEqual(calls[2].arguments[1], z.circuitModule.get('a'));
+      assert.strictEqual(calls[3].arguments[0], y.circuitModule.get('a'));
+      assert.strictEqual(calls[3].arguments[1], z.circuitModule.get('b'));
+      assert.strictEqual(calls[4].arguments[0], x.circuitModule.get('b'));
+      assert.strictEqual(calls[4].arguments[1], y.circuitModule.get('b'));
+      assert.strictEqual(calls[5].arguments[0], y.circuitModule.get('b'));
+      assert.strictEqual(calls[5].arguments[1], z.circuitModule.get('b'));
     });
 
-    it('reset', () => {
-      const f = mock.fn(() => { return Promise.resolve(); });
+    it('reset', async () => {
+      const f = mock.fn(() => Promise.resolve());
       const env = TestEnvironment({ circuitModuleUnloader: f });
-      return env.exec([
+      await env.exec([
         ':new x Module',
         ':new y Module',
         ':reset',
-      ]).then(() => {
-        assert.strictEqual(Object.keys(env.variableTable).length, 0);
-        assert(f.mock.callCount(), 2);
-      });
+      ]);
+      assert.strictEqual(Object.keys(env.variableTable).length, 0);
+      assert(f.mock.callCount(), 2);
     });
 
-    it('load command', () => {
+    it('load command', async () => {
       const f = mock.fn(() => {
         return Promise.resolve({
           text: ':new x Module',
@@ -202,22 +188,20 @@ describe('Environment', () => {
         });
       });
       const env = TestEnvironment({ scriptLoader: f });
-      return env.exec(':load /path/to/script').then(() => {
-        assert(env.variableTable.hasOwnProperty('x'));
-        assert.strictEqual(f.mock.calls[0].arguments[0], '/path/to/script');
-      });
+      await env.exec(':load /path/to/script');
+      assert(env.variableTable.hasOwnProperty('x'));
+      assert.strictEqual(f.mock.calls[0].arguments[0], '/path/to/script');
     });
 
-    it('save command', () => {
-      const f = mock.fn(() => { return Promise.resolve(); });
+    it('save command', async () => {
+      const f = mock.fn(() => Promise.resolve());
       const env = TestEnvironment({ scriptSaver: f });
-      return env.exec([
+      await env.exec([
         ':new x Module',
         ':save /path/to/script',
-      ]).then(() => {
-        assert.strictEqual(f.mock.calls[0].arguments[0], '/path/to/script');
-        assert.strictEqual(f.mock.calls[0].arguments[1], 'x:Module\n');
-      });
+      ]);
+      assert.strictEqual(f.mock.calls[0].arguments[0], '/path/to/script');
+      assert.strictEqual(f.mock.calls[0].arguments[1], 'x:Module\n');
     });
   });
 });
