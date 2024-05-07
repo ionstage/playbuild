@@ -1,9 +1,9 @@
-var assert = require('node:assert');
-var { describe, it } = require('node:test');
-var Command = require('../js/models/command.js');
+const assert = require('node:assert');
+const { describe, it } = require('node:test');
+const Command = require('../js/models/command.js');
 
-describe('Command', function() {
-  describe('.parse', function() {
+describe('Command', () => {
+  describe('.parse', () => {
     [
       [':new x Module', ['new', 'x', 'Module']],
       [':new  x \t Module', ['new', 'x', 'Module']],
@@ -59,13 +59,13 @@ describe('Command', function() {
       [':send x.member0 ">>y.member1"', ['send', 'x', 'member0', '>>y.member1']],
       [':send x.member0 "<<"', ['send', 'x', 'member0', '<<']],
     ].forEach(function(p) {
-      it('"' + p[0] + '"', function() {
+      it('"' + p[0] + '"', () => {
         assert.deepEqual(Command.parse(p[0]), p[1]);
       });
     });
   });
 
-  describe('.parse (error)', function() {
+  describe('.parse (error)', () => {
     [
       ':',
       ':_command',
@@ -102,8 +102,8 @@ describe('Command', function() {
       ':load x y',
       ':save x y',
     ].forEach(function(p) {
-      it('"' + p + '"', function() {
-        assert.throws(function() {
+      it('"' + p + '"', () => {
+        assert.throws(() => {
           Command.parse(p);
         }, SyntaxError);
       });
