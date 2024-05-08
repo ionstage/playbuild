@@ -1,6 +1,6 @@
-const assert = require('node:assert');
-const { describe, it, mock } = require('node:test');
-const CircuitModule = require('../js/models/circuit-module.js');
+import assert from 'node:assert';
+import { describe, it, mock } from 'node:test';
+import { CircuitModule } from '../js/models/circuit-module.js';
 
 describe('CircuitModule.PlayBuildModule', () => {
   it('has members without value', () => {

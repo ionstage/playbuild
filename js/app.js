@@ -1,10 +1,6 @@
-(function(app) {
-  'use strict';
+import { dom } from './dom.js';
+import { CircuitModule } from './models/circuit-module.js';
+import { Main } from './components/main.js';
 
-  var dom = app.dom || require('./dom.js');
-  var CircuitModule = app.CircuitModule || require('./models/circuit-module.js');
-  var Main = app.Main || require('./components/main.js');
-
-  dom.export('PlayBuildModule', CircuitModule.PlayBuildModule);
-  app.main = new Main({ element: dom.body() });
-})(this.app || (this.app = {}));
+dom.export('PlayBuildModule', CircuitModule.PlayBuildModule);
+var main = new Main({ element: dom.body() });

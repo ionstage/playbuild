@@ -1,12 +1,16 @@
 {
   "name": "playbuild",
   "version": "0.0.1",
+  "type": "module",
   "scripts": {
     "build": "npm run build:bundle && npm run build:js && npm run build:css",
     "build:bundle": "uglifyjs js/bundle.js -o build/js/bundle.min.js --comments '/^\\!|^@preserve|^@cc_on|\\bMIT\\b|\\bMPL\\b|\\bGPL\\b|\\(c\\)|License|Copyright/' -c -m",
     "build:css": "cat css/*.css | cleancss -o build/css/app.min.css",
     "build:js": "browserify js/app.js --no-bundle-external | uglifyjs -o build/js/app.min.js -c -m",
-    "bundle": "browserify -r circuit -r file-saver -r jcore -o js/bundle.js"
+    "bundle": "npm run bundle:circuit && npm run bundle:file-saver && npm run bundle:jcore",
+    "bundle:circuit": "esbuild js/bundle/base/circuit.js --bundle --format=esm --outfile=js/bundle/circuit.js",
+    "bundle:file-saver": "esbuild js/bundle/base/file-saver.js --bundle --format=esm --outfile=js/bundle/file-saver.js",
+    "bundle:jcore": "esbuild js/bundle/base/jcore.js --bundle --format=esm --outfile=js/bundle/jcore.js"
   },
   "dependencies": {
     "circuit": "^1.1.3",
@@ -16,6 +20,7 @@
   "devDependencies": {
     "browserify": "^16.2.2",
     "clean-css-cli": "^4.1.11",
+    "esbuild": "^0.21.1",
     "uglify-js": "^3.4.2"
   },
   "private": true

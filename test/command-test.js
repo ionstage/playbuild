@@ -1,6 +1,6 @@
-const assert = require('node:assert');
-const { describe, it } = require('node:test');
-const Command = require('../js/models/command.js');
+import assert from 'node:assert';
+import { describe, it } from 'node:test';
+import { Command } from '../js/models/command.js';
 
 describe('Command', () => {
   describe('.parse', () => {

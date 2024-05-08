@@ -1,7 +1,7 @@
-const assert = require('node:assert');
-const { describe, it, mock } = require('node:test');
-const CircuitModule = require('../js/models/circuit-module.js');
-const Environment = require('../js/models/environment.js');
+import assert from 'node:assert';
+import { describe, it, mock } from 'node:test';
+import { CircuitModule } from '../js/models/circuit-module.js';
+import { Environment } from '../js/models/environment.js';
 
 function TestEnvironment(props) {
   return new Environment(Object.assign({
