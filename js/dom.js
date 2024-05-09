@@ -1,158 +1,158 @@
-export var dom = {};
-
-dom.export = function(key, value) {
-  var g = (typeof global !== 'undefined' ? global : window);
-  Object.defineProperty(g, key, { value: value });
-};
-
-dom.body = function() {
-  return document.body;
-};
-
-dom.render = function(s) {
-  var el = document.createRange().createContextualFragment(s).firstChild;
-  el.parentNode.removeChild(el);
-  return el;
-};
-
-dom.attr = function(el, props) {
-  Object.keys(props).forEach(function(key) {
-    el.setAttribute(key, props[key]);
-  });
-};
-
-dom.css = function(el, props) {
-  var style = el.style;
-  Object.keys(props).forEach(function(key) {
-    style[key] = props[key];
-  });
-};
-
-dom.toggleClass = function(el, className, force) {
-  if (force) {
-    el.classList.add(className);
-  } else {
-    el.classList.remove(className);
+export class dom {
+  static export(key, value) {
+    var g = (typeof global !== 'undefined' ? global : window);
+    Object.defineProperty(g, key, { value: value });
   }
-};
 
-dom.text = function(el, s) {
-  el.textContent = s;
-};
-
-dom.value = function(el, s) {
-  if (typeof s === 'undefined') {
-    return el.value;
+  static body() {
+    return document.body;
   }
-  el.value = s;
-};
 
-dom.disabled = function(el, disabled) {
-  el.disabled = disabled;
-};
+  static render(s) {
+    var el = document.createRange().createContextualFragment(s).firstChild;
+    el.parentNode.removeChild(el);
+    return el;
+  }
 
-dom.focus = function(el) {
-  el.focus();
-};
+  static attr(el, props) {
+    Object.keys(props).forEach(function(key) {
+      el.setAttribute(key, props[key]);
+    });
+  }
 
-dom.blur = function(el) {
-  el.blur();
-};
+  static css(el, props) {
+    var style = el.style;
+    Object.keys(props).forEach(function(key) {
+      style[key] = props[key];
+    });
+  }
 
-dom.file = function(el) {
-  return el.files[0];
-};
+  static toggleClass(el, className, force) {
+    if (force) {
+      el.classList.add(className);
+    } else {
+      el.classList.remove(className);
+    }
+  }
 
-dom.contentWindow = function(iframe) {
-  return iframe.contentWindow;
-};
+  static text(el, s) {
+    el.textContent = s;
+  }
 
-dom.contentHeight = function(iframe) {
-  return iframe.contentDocument.documentElement.scrollHeight;
-};
+  static value(el, s) {
+    if (typeof s === 'undefined') {
+      return el.value;
+    }
+    el.value = s;
+  }
 
-dom.on = function(el, type, listener, useCapture) {
-  el.addEventListener(type, listener, !!useCapture);
-};
+  static disabled(el, disabled) {
+    el.disabled = disabled;
+  }
 
-dom.off = function(el, type, listener, useCapture) {
-  el.removeEventListener(type, listener, !!useCapture);
-};
+  static focus(el) {
+    el.focus();
+  }
 
-dom.once = function(el, type, listener, useCapture) {
-  var wrapper = function() {
-    dom.off(el, type, wrapper, useCapture);
-    listener.apply(null, arguments);
-  };
-  dom.on(el, type, wrapper, useCapture);
-};
+  static blur(el) {
+    el.blur();
+  }
 
-dom.click = function(el) {
-  el.click();
-};
+  static file(el) {
+    return el.files[0];
+  }
 
-dom.target = function(event) {
-  return event.target;
-};
+  static contentWindow(iframe) {
+    return iframe.contentWindow;
+  }
 
-dom.cancel = function(event) {
-  event.preventDefault();
-};
+  static contentHeight(iframe) {
+    return iframe.contentDocument.documentElement.scrollHeight;
+  }
 
-dom.readFile = function(file) {
-  return new Promise(function(resolve, reject) {
-    var reader = new FileReader();
+  static on(el, type, listener, useCapture) {
+    el.addEventListener(type, listener, !!useCapture);
+  }
 
-    var onfailed = function() {
-      reject(new Error('Failed to read file: ' + file.name));
+  static off(el, type, listener, useCapture) {
+    el.removeEventListener(type, listener, !!useCapture);
+  }
+
+  static once(el, type, listener, useCapture) {
+    var wrapper = function() {
+      dom.off(el, type, wrapper, useCapture);
+      listener.apply(null, arguments);
     };
+    dom.on(el, type, wrapper, useCapture);
+  }
 
-    reader.onload = function(event) {
-      resolve(event.target.result);
-    };
+  static click(el) {
+    el.click();
+  }
 
-    reader.onerror = onfailed;
-    reader.onabort = onfailed;
+  static target(event) {
+    return event.target;
+  }
 
-    reader.readAsText(file);
-  });
-};
+  static cancel(event) {
+    event.preventDefault();
+  }
 
-dom.fileName = function(file) {
-  return file.name;
-};
+  static readFile(file) {
+    return new Promise(function(resolve, reject) {
+      var reader = new FileReader();
 
-dom.ajax = function(opt) {
-  var type = opt.type;
-  var url = opt.url;
+      var onfailed = function() {
+        reject(new Error('Failed to read file: ' + file.name));
+      };
 
-  return new Promise(function(resolve, reject) {
-    var req = new XMLHttpRequest();
+      reader.onload = function(event) {
+        resolve(event.target.result);
+      };
 
-    var onfailed = function() {
-      reject(new Error('Failed to load resource: ' + type + ' ' + url));
-    };
+      reader.onerror = onfailed;
+      reader.onabort = onfailed;
 
-    req.onload = function() {
-      if (req.status >= 200 && req.status < 400) {
-        resolve(req.response);
-      } else {
-        onfailed();
-      }
-    };
+      reader.readAsText(file);
+    });
+  }
 
-    req.onerror = onfailed;
-    req.onabort = onfailed;
+  static fileName(file) {
+    return file.name;
+  }
 
-    req.open(type, url, true);
-    req.send();
-  });
-};
+  static ajax(opt) {
+    var type = opt.type;
+    var url = opt.url;
 
-dom.load = function(key, defaultValue) {
-  return JSON.parse(localStorage.getItem(key)) || defaultValue;
-};
+    return new Promise(function(resolve, reject) {
+      var req = new XMLHttpRequest();
 
-dom.save = function(key, value) {
-  localStorage.setItem(key, JSON.stringify(value));
-};
+      var onfailed = function() {
+        reject(new Error('Failed to load resource: ' + type + ' ' + url));
+      };
+
+      req.onload = function() {
+        if (req.status >= 200 && req.status < 400) {
+          resolve(req.response);
+        } else {
+          onfailed();
+        }
+      };
+
+      req.onerror = onfailed;
+      req.onabort = onfailed;
+
+      req.open(type, url, true);
+      req.send();
+    });
+  }
+
+  static load(key, defaultValue) {
+    return JSON.parse(localStorage.getItem(key)) || defaultValue;
+  }
+
+  static save(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+}

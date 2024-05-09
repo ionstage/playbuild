@@ -1,64 +1,70 @@
 import { jCore } from '../bundle/jcore.js';
 import { dom } from '../dom.js';
 
-export var Variable = jCore.Component.inherits(function(props) {
-  this.name = this.prop(props.name);
-  this.moduleName = this.prop(props.moduleName);
-  this.content = new Variable.Content({ element: this.findElement('.variable-content') });
-});
+export class Variable extends jCore.Component {
+  constructor(props) {
+    super(props);
+    this.name = this.prop(props.name);
+    this.moduleName = this.prop(props.moduleName);
+    this.content = new VariableContent({ element: this.findElement('.variable-content') });
+    this.oninit();
+  }
 
-Variable.prototype.nameElement = function() {
-  return this.findElement('.variable-name');
-};
+  nameElement() {
+    return this.findElement('.variable-name');
+  }
 
-Variable.prototype.moduleNameElement = function() {
-  return this.findElement('.variable-module-name');
-};
+  moduleNameElement() {
+    return this.findElement('.variable-module-name');
+  }
 
-Variable.prototype.contentUrl = function() {
-  return 'playbuild_modules/' + encodeURI(this.moduleName()) + '.html';
-};
+  contentUrl() {
+    return 'playbuild_modules/' + encodeURI(this.moduleName()) + '.html';
+  }
 
-Variable.prototype.circuitModule = function() {
-  return this.content.circuitModule();
-};
+  circuitModule() {
+    return this.content.circuitModule();
+  }
 
-Variable.prototype.render = function() {
-  return dom.render(Variable.HTML_TEXT);
-};
+  render() {
+    return dom.render(Variable.#HTML_TEXT);
+  }
 
-Variable.prototype.oninit = function() {
-  dom.text(this.nameElement(), this.name());
-  dom.text(this.moduleNameElement(), this.moduleName());
-};
+  oninit() {
+    dom.text(this.nameElement(), this.name());
+    dom.text(this.moduleNameElement(), this.moduleName());
+  }
 
-Variable.prototype.load = function() {
-  return this.content.load(this.contentUrl());
-};
+  load() {
+    return this.content.load(this.contentUrl());
+  }
 
-Variable.HTML_TEXT = [
-  '<div class="variable">',
-    '<div class="variable-header">',
-      '<div class="variable-name"></div>',
-      '<div class="variable-module-name"></div>',
+  static #HTML_TEXT = [
+    '<div class="variable">',
+      '<div class="variable-header">',
+        '<div class="variable-name"></div>',
+        '<div class="variable-module-name"></div>',
+      '</div>',
+      '<iframe class="variable-content"></iframe>',
     '</div>',
-    '<iframe class="variable-content"></iframe>',
-  '</div>',
-].join('');
+  ].join('');
+}
 
-Variable.Content = (function() {
-  var Content = jCore.Component.inherits();
+class VariableContent extends jCore.Component {
+  constructor(props) {
+    super(props);
+  }
 
-  Content.prototype.contentWindow = function() {
+  contentWindow() {
     return dom.contentWindow(this.element());
-  };
+  }
 
-  Content.prototype.circuitModule = function() {
+  circuitModule() {
     var playbuild = this.contentWindow().playbuild;
     return (playbuild && playbuild.exports);
-  };
+  }
 
-  Content.prototype.load = function(url) {
+  load(url) {
     return new Promise(function(resolve, reject) {
       var timeoutID = setTimeout(reject, 30 * 1000, new Error('PlayBuildScript runtime error: Load timeout for content'));
       dom.once(this.element(), 'load', function() {
@@ -72,7 +78,5 @@ Variable.Content = (function() {
       }
       dom.css(this.element(), { height: dom.contentHeight(this.element()) + 'px' });
     }.bind(this));
-  };
-
-  return Content;
-})();
+  }
+}
