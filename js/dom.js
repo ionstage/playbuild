@@ -1,7 +1,7 @@
 export class dom {
   static export(key, value) {
     const g = (typeof global !== 'undefined' ? global : window);
-    Object.defineProperty(g, key, { value: value });
+    Object.defineProperty(g, key, { value });
   }
 
   static body() {
