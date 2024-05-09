@@ -31,24 +31,22 @@
       border: 0;
     }
   </style>
+  <script type="module" src="./playbuild-module.js"></script>
+  <script type="module">
+    const buttonElement = document.getElementById('button');
+
+    const module = new playbuild.Module([
+      { name: 'click', type: 'event' },
+    ]);
+
+    buttonElement.addEventListener('click', () => {
+      module.get('click')();
+    });
+
+    playbuild.exports = module;
+  </script>
 </head>
 <body>
   <button id="button"></button>
-  <script src="./playbuild-module.js"></script>
-  <script>
-    (function() {
-      const buttonElement = document.getElementById('button');
-
-      const module = new playbuild.Module([
-        { name: 'click', type: 'event' },
-      ]);
-
-      buttonElement.addEventListener('click', () => {
-        module.get('click')();
-      });
-
-      playbuild.exports = module;
-    })();
-  </script>
 </body>
 </html>
