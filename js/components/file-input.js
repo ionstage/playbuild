@@ -6,8 +6,8 @@ export class FileInput extends jCore.Component {
     super(props);
   }
 
-  load() {
-    return new Promise(resolve => {
+  async load() {
+    const file = await new Promise(resolve => {
       const onchange = event => {
         resolve(dom.file(dom.target(event)));
       };
@@ -16,15 +16,10 @@ export class FileInput extends jCore.Component {
       dom.once(dom.body(), 'focus', () => {
         dom.off(this.element(), 'change', onchange);
       }, true);
-    }).then(file => {
-      const fileName = dom.fileName(file);
-      dom.value(this.element(), '');
-      return dom.readFile(file).then(text => {
-        return {
-          text: text,
-          fileName: fileName,
-        };
-      });
     });
+    const fileName = dom.fileName(file);
+    dom.value(this.element(), '');
+    const text = await dom.readFile(file);
+    return { text, fileName };
   }
 }

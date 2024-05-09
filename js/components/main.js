@@ -21,53 +21,44 @@ export class Main extends jCore.Component {
     this.oninit();
   }
 
-  circuitModuleLoader(variableName, moduleName) {
-    return this.content.loadVariable(variableName, moduleName).then(variable => {
-      return variable.circuitModule();
-    });
+  async circuitModuleLoader(variableName, moduleName) {
+    const variable = await this.content.loadVariable(variableName, moduleName);
+    return variable.circuitModule();
   }
 
-  circuitModuleUnloader(variableName) {
-    return new Promise(resolve => {
-      this.content.deleteVariable(variableName);
-      resolve();
-    });
+  async circuitModuleUnloader(variableName) {
+    this.content.deleteVariable(variableName);
   }
 
-  scriptLoader(path) {
+  async scriptLoader(path) {
     if (!path) {
       this.commandInput.disabled(false);
       this.commandInput.blur();
       return this.fileInput.load();
     }
-    return dom.ajax({
+    const text = await dom.ajax({
       type: 'GET',
       url: 'playbuild_scripts/' + path,
-    }).then(text => {
-      return {
-        text: text,
-        fileName: path.split('/').pop(),
-      };
     });
+    const fileName = path.split('/').pop();
+    return { text, fileName };
   }
 
-  scriptSaver(path, text) {
-    return new Promise(resolve => {
-      FileSaver.saveAs(new Blob([text], { type: 'plain/text' }), path);
-      resolve();
-    });
+  async scriptSaver(path, text) {
+    FileSaver.saveAs(new Blob([text], { type: 'plain/text' }), path);
   }
 
   oninit() {
     this.commandInput.on('exec', this.onexec.bind(this));
   }
 
-  onexec(text, done) {
-    this.env.exec(text).then(() => {
+  async onexec(text, done) {
+    try {
+      await this.env.exec(text);
       done();
-    }).catch(e => {
+    } catch (e) {
       console.error(e);
       done(e);
-    });
+    }
   }
 }

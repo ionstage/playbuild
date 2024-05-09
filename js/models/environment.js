@@ -35,23 +35,17 @@ export class Environment {
     return member;
   }
 
-  loadVariable(name, moduleName) {
-    return this.circuitModuleLoader(name, moduleName).then(circuitModule => {
-      if (!circuitModule) {
-        throw new Error('PlayBuildScript runtime error: Invalid circuit module');
-      }
-      this.variableTable[name] = new EnvironmentVariable({
-        name: name,
-        moduleName: moduleName,
-        circuitModule: circuitModule,
-      });
-    });
+  async loadVariable(name, moduleName) {
+    const circuitModule = await this.circuitModuleLoader(name, moduleName);
+    if (!circuitModule) {
+      throw new Error('PlayBuildScript runtime error: Invalid circuit module');
+    }
+    this.variableTable[name] = new EnvironmentVariable({ name, moduleName, circuitModule });
   }
 
-  unloadVariable(name) {
-    return this.circuitModuleUnloader(name).then(() => {
-      this.deleteVariable(name);
-    });
+  async unloadVariable(name) {
+    await this.circuitModuleUnloader(name);
+    this.deleteVariable(name);
   }
 
   deleteVariable(name) {
@@ -85,14 +79,14 @@ export class Environment {
     helper.remove(this.bindings, binding);
   }
 
-  loadScript(text, fileName) {
-    return text.split(/\r\n|\r|\n/g).reduce((p, line, i) => {
-      return p.then(() => {
-        return this.exec(line).catch(e => {
-          throw new SyntaxError(e.message, fileName, i + 1);
-        });
-      });
-    }, Promise.resolve());
+  async loadScript(text, fileName) {
+    for (const [i, line] of text.split(/\r\n|\r|\n/g).entries()) {
+      try {
+        await this.exec(line);
+      } catch (e) {
+        throw new SyntaxError(e.message, fileName, i + 1);
+      }
+    }
   }
 
   generateScript() {
@@ -106,20 +100,18 @@ export class Environment {
     return (variableScript + '\n' + bindingScript).trim() + '\n';
   }
 
-  exec(list) {
+  async exec(list) {
     if (typeof list === 'string') {
       list = [list];
     }
-    return list.reduce((p, s) => {
-      return p.then(() => {
-        const args = Command.parse(s);
-        if (args.length === 0) {
-          return;
-        }
-        const name = args.shift();
-        return Environment.#EXEC_TABLE[name].apply(this, args);
-      });
-    }, Promise.resolve());
+    for (const s of list) {
+      const args = Command.parse(s);
+      if (args.length === 0) {
+        return;
+      }
+      const name = args.shift();
+      await Environment.#EXEC_TABLE[name].apply(this, args);
+    }
   }
 
   static #EXEC_TABLE = {
@@ -153,10 +145,9 @@ export class Environment {
         return this.unloadVariable(variableName);
       }));
     },
-    load(filePath) {
-      return this.scriptLoader(filePath).then(result => {
-        return this.loadScript(result.text, result.fileName);
-      });
+    async load(filePath) {
+      const result = await this.scriptLoader(filePath);
+      return this.loadScript(result.text, result.fileName);
     },
     save(filePath) {
       return this.scriptSaver(filePath, this.generateScript());

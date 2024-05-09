@@ -7,20 +7,18 @@ export class Content extends jCore.Component {
     this.variableTable = {};
   }
 
-  loadVariable(name, moduleName) {
-    const variable = new Variable({
-      name: name,
-      moduleName: moduleName,
-    });
+  async loadVariable(name, moduleName) {
+    const variable = new Variable({ name, moduleName });
     variable.parentElement(this.element());
     variable.redraw();
-    return variable.load().then(() => {
+    try {
+      await variable.load();
       this.variableTable[name] = variable;
       return variable;
-    }).catch(e => {
+    } catch (e) {
       variable.parentElement(null);
       throw e;
-    });
+    }
   }
 
   deleteVariable(name) {
