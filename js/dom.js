@@ -1,6 +1,6 @@
 export class dom {
   static export(key, value) {
-    var g = (typeof global !== 'undefined' ? global : window);
+    const g = (typeof global !== 'undefined' ? global : window);
     Object.defineProperty(g, key, { value: value });
   }
 
@@ -9,20 +9,20 @@ export class dom {
   }
 
   static render(s) {
-    var el = document.createRange().createContextualFragment(s).firstChild;
+    const el = document.createRange().createContextualFragment(s).firstChild;
     el.parentNode.removeChild(el);
     return el;
   }
 
   static attr(el, props) {
-    Object.keys(props).forEach(function(key) {
+    Object.keys(props).forEach(key => {
       el.setAttribute(key, props[key]);
     });
   }
 
   static css(el, props) {
-    var style = el.style;
-    Object.keys(props).forEach(function(key) {
+    const style = el.style;
+    Object.keys(props).forEach(key => {
       style[key] = props[key];
     });
   }
@@ -79,7 +79,7 @@ export class dom {
   }
 
   static once(el, type, listener, useCapture) {
-    var wrapper = function() {
+    const wrapper = () => {
       dom.off(el, type, wrapper, useCapture);
       listener.apply(null, arguments);
     };
@@ -99,14 +99,14 @@ export class dom {
   }
 
   static readFile(file) {
-    return new Promise(function(resolve, reject) {
-      var reader = new FileReader();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
 
-      var onfailed = function() {
+      const onfailed = () => {
         reject(new Error('Failed to read file: ' + file.name));
       };
 
-      reader.onload = function(event) {
+      reader.onload = event => {
         resolve(event.target.result);
       };
 
@@ -122,17 +122,17 @@ export class dom {
   }
 
   static ajax(opt) {
-    var type = opt.type;
-    var url = opt.url;
+    const type = opt.type;
+    const url = opt.url;
 
-    return new Promise(function(resolve, reject) {
-      var req = new XMLHttpRequest();
+    return new Promise((resolve, reject) => {
+      const req = new XMLHttpRequest();
 
-      var onfailed = function() {
+      const onfailed = () => {
         reject(new Error('Failed to load resource: ' + type + ' ' + url));
       };
 
-      req.onload = function() {
+      req.onload = () => {
         if (req.status >= 200 && req.status < 400) {
           resolve(req.response);
         } else {

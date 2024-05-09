@@ -51,7 +51,7 @@ export class CommandInput extends jCore.Component {
   }
 
   onkeydown(event) {
-    var key = CommandInput.#keyDownMap[event.which];
+    const key = CommandInput.#keyDownMap[event.which];
     if (key) {
       this.isError(false);
       this['on' + key](event);
@@ -59,7 +59,7 @@ export class CommandInput extends jCore.Component {
   }
 
   onenter() {
-    var text = this.text();
+    const text = this.text();
     if (text) {
       this.disabled(true);
       this.emit('exec', text, this.done.bind(this));

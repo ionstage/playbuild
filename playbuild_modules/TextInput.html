@@ -24,11 +24,11 @@
   <script src="./playbuild-module.js"></script>
   <script>
     (function() {
-      var text = '';
-      var textInputElement = document.getElementById('text-input');
+      let text = '';
+      const textInputElement = document.getElementById('text-input');
 
-      var props = {
-        text: function(value) {
+      const props = {
+        text(value) {
           value = (value != null ? String(value) : text);
           if (value !== text) {
             module.get('change')();
@@ -39,13 +39,13 @@
         },
       };
 
-      var module = new playbuild.Module([
+      const module = new playbuild.Module([
         { name: 'text', type: 'prop', arg: props.text },
         { name: 'change', type: 'event' },
       ]);
 
-      textInputElement.addEventListener('input', function(event) {
-        var value = event.target.value;
+      textInputElement.addEventListener('input', event => {
+        const value = event.target.value;
         if (value !== text) {
           module.get('change')();
           text = value;

@@ -7,24 +7,24 @@ export class FileInput extends jCore.Component {
   }
 
   load() {
-    return new Promise(function(resolve) {
-      var onchange = function(event) {
+    return new Promise(resolve => {
+      const onchange = event => {
         resolve(dom.file(dom.target(event)));
       };
       dom.on(this.element(), 'change', onchange);
       dom.click(this.element());
-      dom.once(dom.body(), 'focus', function() {
+      dom.once(dom.body(), 'focus', () => {
         dom.off(this.element(), 'change', onchange);
-      }.bind(this), true);
-    }.bind(this)).then(function(file) {
-      var fileName = dom.fileName(file);
+      }, true);
+    }).then(file => {
+      const fileName = dom.fileName(file);
       dom.value(this.element(), '');
-      return dom.readFile(file).then(function(text) {
+      return dom.readFile(file).then(text => {
         return {
           text: text,
           fileName: fileName,
         };
       });
-    }.bind(this));
+    });
   }
 }

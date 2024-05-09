@@ -8,16 +8,16 @@ export class Content extends jCore.Component {
   }
 
   loadVariable(name, moduleName) {
-    var variable = new Variable({
+    const variable = new Variable({
       name: name,
       moduleName: moduleName,
     });
     variable.parentElement(this.element());
     variable.redraw();
-    return variable.load().then(function() {
+    return variable.load().then(() => {
       this.variableTable[name] = variable;
       return variable;
-    }.bind(this)).catch(function(e) {
+    }).catch(e => {
       variable.parentElement(null);
       throw e;
     });

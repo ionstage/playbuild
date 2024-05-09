@@ -1,19 +1,19 @@
 export class helper {
   static values(obj) {
-    return Object.keys(obj).map(function(key) {
+    return Object.keys(obj).map(key => {
       return obj[key];
     });
   }
 
   static remove(array, item) {
-    var index = array.indexOf(item);
+    const index = array.indexOf(item);
     if (index !== -1) {
       array.splice(index, 1);
     }
   }
 
   static find(array, callback) {
-    for (var i = 0, len = array.length; i < len; i++) {
+    for (let i = 0, len = array.length; i < len; i++) {
       if (callback(array[i], i, array)) {
         return array[i];
       }
@@ -21,7 +21,7 @@ export class helper {
     return null;
   }
 
-  static wrapper = function() {
+  static wrapper = () => {
     return class Wrapper {
       constructor(self, wrapper) {
         return Object.defineProperty(wrapper, 'unwrap', { value: Wrapper.unwrap.bind(self) });

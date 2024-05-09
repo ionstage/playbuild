@@ -60,23 +60,23 @@ class VariableContent extends jCore.Component {
   }
 
   circuitModule() {
-    var playbuild = this.contentWindow().playbuild;
+    const playbuild = this.contentWindow().playbuild;
     return (playbuild && playbuild.exports);
   }
 
   load(url) {
-    return new Promise(function(resolve, reject) {
-      var timeoutID = setTimeout(reject, 30 * 1000, new Error('PlayBuildScript runtime error: Load timeout for content'));
-      dom.once(this.element(), 'load', function() {
+    return new Promise((resolve, reject) => {
+      const timeoutID = setTimeout(reject, 30 * 1000, new Error('PlayBuildScript runtime error: Load timeout for content'));
+      dom.once(this.element(), 'load', () => {
         clearTimeout(timeoutID);
         resolve(this.circuitModule());
-      }.bind(this));
+      });
       dom.attr(this.element(), { src: url });
-    }.bind(this)).then(function(circuitModule) {
+    }).then(circuitModule => {
       if (!circuitModule) {
         throw new Error('PlayBuildScript runtime error: Invalid circuit module');
       }
       dom.css(this.element(), { height: dom.contentHeight(this.element()) + 'px' });
-    }.bind(this));
+    });
   }
 }

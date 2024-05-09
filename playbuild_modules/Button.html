@@ -37,13 +37,13 @@
   <script src="./playbuild-module.js"></script>
   <script>
     (function() {
-      var buttonElement = document.getElementById('button');
+      const buttonElement = document.getElementById('button');
 
-      var module = new playbuild.Module([
+      const module = new playbuild.Module([
         { name: 'click', type: 'event' },
       ]);
 
-      buttonElement.addEventListener('click', function() {
+      buttonElement.addEventListener('click', () => {
         module.get('click')();
       });
 

@@ -22,16 +22,16 @@ export class Main extends jCore.Component {
   }
 
   circuitModuleLoader(variableName, moduleName) {
-    return this.content.loadVariable(variableName, moduleName).then(function(variable) {
+    return this.content.loadVariable(variableName, moduleName).then(variable => {
       return variable.circuitModule();
     });
   }
 
   circuitModuleUnloader(variableName) {
-    return new Promise(function(resolve) {
+    return new Promise(resolve => {
       this.content.deleteVariable(variableName);
       resolve();
-    }.bind(this));
+    });
   }
 
   scriptLoader(path) {
@@ -43,7 +43,7 @@ export class Main extends jCore.Component {
     return dom.ajax({
       type: 'GET',
       url: 'playbuild_scripts/' + path,
-    }).then(function(text) {
+    }).then(text => {
       return {
         text: text,
         fileName: path.split('/').pop(),
@@ -52,7 +52,7 @@ export class Main extends jCore.Component {
   }
 
   scriptSaver(path, text) {
-    return new Promise(function(resolve) {
+    return new Promise(resolve => {
       FileSaver.saveAs(new Blob([text], { type: 'plain/text' }), path);
       resolve();
     });
@@ -63,9 +63,9 @@ export class Main extends jCore.Component {
   }
 
   onexec(text, done) {
-    this.env.exec(text).then(function() {
+    this.env.exec(text).then(() => {
       done();
-    }).catch(function(e) {
+    }).catch(e => {
       console.error(e);
       done(e);
     });

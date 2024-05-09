@@ -29,11 +29,11 @@
   <script src="./playbuild-module.js"></script>
   <script>
     (function() {
-      var count = 0;
-      var contentElement = document.getElementById('content');
+      let count = 0;
+      const contentElement = document.getElementById('content');
 
-      var props = {
-        count: function(value) {
+      const props = {
+        count(value) {
           value = parseInt((!isNaN(value) ? Number(value) : count), 10);
           if (value !== count) {
             count = value;
@@ -43,16 +43,16 @@
         },
       };
 
-      var events = {
-        up: function() {
+      const events = {
+        up() {
           module.get('count')(count + 1);
         },
-        reset: function() {
+        reset() {
           module.get('count')(0);
         },
       };
 
-      var module = new playbuild.Module([
+      const module = new playbuild.Module([
         { name: 'count', type: 'prop', arg: props.count },
         { name: 'up', type: 'event', arg: events.up },
         { name: 'reset', type: 'event', arg: events.reset },
