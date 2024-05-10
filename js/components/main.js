@@ -36,10 +36,8 @@ export class Main extends jCore.Component {
       this.commandInput.blur();
       return this.fileInput.load();
     }
-    const text = await dom.ajax({
-      type: 'GET',
-      url: 'playbuild_scripts/' + path,
-    });
+    const res = await fetch('playbuild_scripts/' + path);
+    const text = await res.text();
     const fileName = path.split('/').pop();
     return { text, fileName };
   }

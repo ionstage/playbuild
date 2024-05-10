@@ -125,33 +125,6 @@ export class dom {
     return file.name;
   }
 
-  static ajax(opt) {
-    const type = opt.type;
-    const url = opt.url;
-
-    return new Promise((resolve, reject) => {
-      const req = new XMLHttpRequest();
-
-      const onfailed = () => {
-        reject(new Error('Failed to load resource: ' + type + ' ' + url));
-      };
-
-      req.onload = () => {
-        if (req.status >= 200 && req.status < 400) {
-          resolve(req.response);
-        } else {
-          onfailed();
-        }
-      };
-
-      req.onerror = onfailed;
-      req.onabort = onfailed;
-
-      req.open(type, url, true);
-      req.send();
-    });
-  }
-
   static load(key, defaultValue) {
     return JSON.parse(localStorage.getItem(key)) || defaultValue;
   }
