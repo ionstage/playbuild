@@ -6,15 +6,6 @@ export class helper {
     }
   }
 
-  static find(array, callback) {
-    for (let i = 0, len = array.length; i < len; i++) {
-      if (callback(array[i], i, array)) {
-        return array[i];
-      }
-    }
-    return null;
-  }
-
   static wrapper = () => {
     return class Wrapper {
       constructor(self, wrapper) {

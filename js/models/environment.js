@@ -13,13 +13,13 @@ export class Environment {
   }
 
   findVariable(member) {
-    return helper.find(Object.values(this.variableTable), variable => {
+    return Object.values(this.variableTable).find(variable => {
       return (variable.circuitModule.get(member.name) === member);
     });
   }
 
   findBinding(sourceMember, targetMember) {
-    return helper.find(this.bindings, binding => {
+    return this.bindings.find(binding => {
       return (binding.sourceMember === sourceMember && binding.targetMember === targetMember);
     });
   }
