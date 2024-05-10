@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    #content {
+      box-sizing: border-box;
+      color: #212121;
+      font-family: monospace;
+      font-size: 42px;
+      height: 48px;
+      line-height: 48px;
+      overflow: hidden;
+      padding-right: 6px;
+      text-align: right;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 100%;
+    }
+  </style>
+  <script type="module" src="./playbuild-module.js"></script>
+  <script type="module">
+    let count = 0;
+    const contentElement = document.getElementById('content');
+
+    const dataArgs = {
+      count(value) {
+        value = parseInt((!isNaN(value) ? Number(value) : count), 10);
+        if (value !== count) {
+          count = value;
+          contentElement.textContent = count;
+        }
+        return count;
+      },
+    };
+
+    const eventArgs = {
+      up() {
+        module.get('count')(count + 1);
+      },
+      reset() {
+        module.get('count')(0);
+      },
+    };
+
+    const module = new playbuild.Module([
+      { name: 'count', type: 'data', arg: dataArgs.count },
+      { name: 'up', type: 'event', arg: eventArgs.up },
+      { name: 'reset', type: 'event', arg: eventArgs.reset },
+    ]);
+
+    contentElement.textContent = count;
+
+    playbuild.exports = module;
+  </script>
+</head>
+<body>
+  <div id="content"></div>
+</body>
+</html>
