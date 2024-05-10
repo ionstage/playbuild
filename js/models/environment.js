@@ -13,7 +13,7 @@ export class Environment {
   }
 
   findVariable(member) {
-    return helper.find(helper.values(this.variableTable), variable => {
+    return helper.find(Object.values(this.variableTable), variable => {
       return (variable.circuitModule.get(member.name) === member);
     });
   }
@@ -90,7 +90,7 @@ export class Environment {
   }
 
   generateScript() {
-    const variableScript = helper.values(this.variableTable).map(variable => {
+    const variableScript = Object.values(this.variableTable).map(variable => {
       return variable.name + ':' + variable.moduleName;
     }).join('\n');
     const bindingScript = this.bindings.map(binding => {

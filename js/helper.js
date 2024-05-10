@@ -1,10 +1,4 @@
 export class helper {
-  static values(obj) {
-    return Object.keys(obj).map(key => {
-      return obj[key];
-    });
-  }
-
   static remove(array, item) {
     const index = array.indexOf(item);
     if (index !== -1) {
