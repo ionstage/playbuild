@@ -4,8 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "npm run build:css && npm run build:js",
-    "build:css": "cat css/*.css | esbuild --loader=css --minify > build/css/app.min.css",
-    "build:js": "esbuild js/app.js --bundle --minify --outfile=build/js/app.min.js",
+    "build:css": "cat css/*.css | esbuild --loader=css --minify > build/app.min.css",
+    "build:js": "esbuild js/app.js --bundle --minify --outfile=build/app.min.js",
     "bundle": "npm run bundle:circuit && npm run bundle:file-saver && npm run bundle:jcore",
     "bundle:circuit": "esbuild js/bundle/base/circuit.js --bundle --format=esm --outfile=js/bundle/circuit.js",
     "bundle:file-saver": "esbuild js/bundle/base/file-saver.js --bundle --format=esm --outfile=js/bundle/file-saver.js",
