@@ -5,7 +5,7 @@ import { CircuitModule } from '../js/models/circuit-module.js';
 describe('CircuitModule.PlayBuildModule', () => {
   it('has members without value', () => {
     const m = new CircuitModule.PlayBuildModule([
-      { name: 'a', type: 'prop' },
+      { name: 'a', type: 'data' },
       { name: 'b', type: 'event' },
     ]);
     const a = m.get('a');
@@ -16,8 +16,8 @@ describe('CircuitModule.PlayBuildModule', () => {
     assert.strictEqual(typeof b(), 'undefined');
   });
 
-  it('has prop members with value', () => {
-    const m = new CircuitModule.PlayBuildModule([{ name: 'a', type: 'prop', arg: 1 }]);
+  it('has data members with value', () => {
+    const m = new CircuitModule.PlayBuildModule([{ name: 'a', type: 'data', arg: 1 }]);
     const a = m.get('a');
     assert.strictEqual(a(), 1);
     a(2);
@@ -36,9 +36,9 @@ describe('CircuitModule.PlayBuildModule', () => {
     const l0 = mock.fn();
     const l1 = mock.fn();
     const m = new CircuitModule.PlayBuildModule([
-      { name: 'a', type: 'prop', arg: 1 },
+      { name: 'a', type: 'data', arg: 1 },
       { name: 'b', type: 'event', arg: l0 },
-      { name: 'a', type: 'prop', arg: 2 },
+      { name: 'a', type: 'data', arg: 2 },
       { name: 'b', type: 'event', arg: l1 },
     ]);
     const a = m.get('a');
@@ -50,8 +50,8 @@ describe('CircuitModule.PlayBuildModule', () => {
   });
 
   it('bind members', () => {
-    const m0 = new CircuitModule.PlayBuildModule([{ name: 'a', type: 'prop' }]);
-    const m1 = new CircuitModule.PlayBuildModule([{ name: 'b', type: 'prop' }]);
+    const m0 = new CircuitModule.PlayBuildModule([{ name: 'a', type: 'data' }]);
+    const m1 = new CircuitModule.PlayBuildModule([{ name: 'b', type: 'data' }]);
     const a = m0.get('a');
     const b = m1.get('b');
     CircuitModule.bind(a, b);
@@ -60,8 +60,8 @@ describe('CircuitModule.PlayBuildModule', () => {
   });
 
   it('unbind members', () => {
-    const m0 = new CircuitModule.PlayBuildModule([{ name: 'a', type: 'prop' }]);
-    const m1 = new CircuitModule.PlayBuildModule([{ name: 'b', type: 'prop' }]);
+    const m0 = new CircuitModule.PlayBuildModule([{ name: 'a', type: 'data' }]);
+    const m1 = new CircuitModule.PlayBuildModule([{ name: 'b', type: 'data' }]);
     const a = m0.get('a');
     const b = m1.get('b');
     CircuitModule.bind(a, b);

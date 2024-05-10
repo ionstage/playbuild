@@ -28,7 +28,7 @@
     let count = 0;
     const contentElement = document.getElementById('content');
 
-    const props = {
+    const dataArgs = {
       count(value) {
         value = parseInt((!isNaN(value) ? Number(value) : count), 10);
         if (value !== count) {
@@ -39,7 +39,7 @@
       },
     };
 
-    const events = {
+    const eventArgs = {
       up() {
         module.get('count')(count + 1);
       },
@@ -49,9 +49,9 @@
     };
 
     const module = new playbuild.Module([
-      { name: 'count', type: 'prop', arg: props.count },
-      { name: 'up', type: 'event', arg: events.up },
-      { name: 'reset', type: 'event', arg: events.reset },
+      { name: 'count', type: 'data', arg: dataArgs.count },
+      { name: 'up', type: 'event', arg: eventArgs.up },
+      { name: 'reset', type: 'event', arg: eventArgs.reset },
     ]);
 
     contentElement.textContent = count;

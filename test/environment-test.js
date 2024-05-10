@@ -59,8 +59,8 @@ describe('Environment', () => {
       const env = TestEnvironment({
         circuitModuleLoader: () => {
           return Promise.resolve(new CircuitModule.PlayBuildModule([
-            { name: 'a', type: 'prop' },
-            { name: 'b', type: 'prop' },
+            { name: 'a', type: 'data' },
+            { name: 'b', type: 'data' },
           ]));
         },
       });
@@ -81,8 +81,8 @@ describe('Environment', () => {
       const env = TestEnvironment({
         circuitModuleLoader: () => {
           return Promise.resolve(new CircuitModule.PlayBuildModule([
-            { name: 'a', type: 'prop' },
-            { name: 'b', type: 'prop' },
+            { name: 'a', type: 'data' },
+            { name: 'b', type: 'data' },
           ]));
         },
       });
@@ -104,7 +104,7 @@ describe('Environment', () => {
       const env = TestEnvironment({
         circuitModuleLoader: () => {
           return Promise.resolve(new CircuitModule.PlayBuildModule([
-            { name: 'a', type: 'prop' },
+            { name: 'a', type: 'data' },
           ]));
         },
       });
@@ -131,8 +131,8 @@ describe('Environment', () => {
       const env = TestEnvironment({
         circuitModuleLoader: (variableName, moduleName) => {
           return Promise.resolve(new CircuitModule.PlayBuildModule([
-            { name: 'a', type: 'prop' },
-            { name: 'b', type: 'prop' },
+            { name: 'a', type: 'data' },
+            { name: 'b', type: 'data' },
           ]));
         },
       });

@@ -23,7 +23,7 @@
     let text = '';
     const textInputElement = document.getElementById('text-input');
 
-    const props = {
+    const dataArgs = {
       text(value) {
         value = (value != null ? String(value) : text);
         if (value !== text) {
@@ -36,7 +36,7 @@
     };
 
     const module = new playbuild.Module([
-      { name: 'text', type: 'prop', arg: props.text },
+      { name: 'text', type: 'data', arg: dataArgs.text },
       { name: 'change', type: 'event' },
     ]);
 

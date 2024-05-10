@@ -27,7 +27,7 @@ var require_circuit = __commonJS({
         return value;
       };
       var circuit2 = {};
-      var CircuitProp = function(initialValue) {
+      var CircuitData = function(initialValue) {
         var self = this;
         var func = function() {
           if (typeof arguments[0] === "undefined") {
@@ -60,7 +60,7 @@ var require_circuit = __commonJS({
         }
         return func;
       };
-      CircuitProp.prototype.update = function() {
+      CircuitData.prototype.update = function() {
         if (!this.dirty)
           return;
         this.dirty = false;
@@ -73,12 +73,12 @@ var require_circuit = __commonJS({
         this.updateCache(value);
         this.markDirty();
       };
-      CircuitProp.prototype.updateCache = function(value) {
+      CircuitData.prototype.updateCache = function(value) {
         this.cache = value;
         this.dirty = false;
       };
-      CircuitProp.prototype.markDirty = function() {
-        CircuitProp.markDirtyTargets(this.targets);
+      CircuitData.prototype.markDirty = function() {
+        CircuitData.markDirtyTargets(this.targets);
         if (!this.dirty)
           return;
         this.dirty = false;
@@ -91,7 +91,7 @@ var require_circuit = __commonJS({
           }, 0);
         }
       };
-      CircuitProp.markDirtyTargets = /* @__PURE__ */ function() {
+      CircuitData.markDirtyTargets = /* @__PURE__ */ function() {
         var dirtyTargets = [];
         var timer = null;
         return function(targets) {
@@ -103,7 +103,7 @@ var require_circuit = __commonJS({
             targetSelf.dirty = true;
             if (lastIndexOf(dirtyTargets, target) === -1)
               dirtyTargets.push(target);
-            CircuitProp.markDirtyTargets(targetSelf.targets);
+            CircuitData.markDirtyTargets(targetSelf.targets);
           }
           if (timer !== null)
             return;
@@ -127,7 +127,7 @@ var require_circuit = __commonJS({
           var canceled = false;
           if (typeof context === "undefined")
             context = null;
-          var contextProp = function(value) {
+          var contextData = function(value) {
             if (typeof value === "undefined")
               return context;
             context = value;
@@ -137,15 +137,15 @@ var require_circuit = __commonJS({
               canceled = true;
             },
             dispatch: function() {
-              self.dispatch(contextProp());
+              self.dispatch(contextData());
             },
-            context: contextProp
+            context: contextData
           };
           if (typeof listener === "function")
             listener(event);
           if (canceled)
             return;
-          self.dispatch(contextProp());
+          self.dispatch(contextData());
         };
         func._self = self;
         this.func = func;
@@ -161,9 +161,10 @@ var require_circuit = __commonJS({
           }
         }, 0);
       };
-      circuit2.prop = function(initialValue) {
-        return new CircuitProp(initialValue);
+      circuit2.data = function(initialValue) {
+        return new CircuitData(initialValue);
       };
+      circuit2.prop = circuit2.data;
       circuit2.event = function(listener) {
         return new CircuitEvent(listener);
       };
@@ -173,11 +174,11 @@ var require_circuit = __commonJS({
         var sourceSelf = source._self;
         var targetSelf = target._self;
         if (sourceSelf.constructor !== targetSelf.constructor)
-          throw new TypeError("Cannot bind prop and event");
+          throw new TypeError("Cannot bind data and event");
         sourceSelf.targets.push(target);
         targetSelf.sources.push(source);
-        if (sourceSelf.constructor === CircuitProp) {
-          CircuitProp.markDirtyTargets([target]);
+        if (sourceSelf.constructor === CircuitData) {
+          CircuitData.markDirtyTargets([target]);
           source();
         }
       };
@@ -189,7 +190,7 @@ var require_circuit = __commonJS({
         var targetIndex = lastIndexOf(sourceSelf.targets, target);
         if (targetIndex === -1)
           throw new Error("Already unbound");
-        if (targetSelf.constructor === CircuitProp && targetSelf.dirty)
+        if (targetSelf.constructor === CircuitData && targetSelf.dirty)
           target();
         var sourceIndex = lastIndexOf(targetSelf.sources, source);
         targetSelf.sources.splice(sourceIndex, 1);
