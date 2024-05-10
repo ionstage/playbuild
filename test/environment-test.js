@@ -5,10 +5,10 @@ import { Environment } from '../js/models/environment.js';
 
 function TestEnvironment(props) {
   return new Environment(Object.assign({
-    circuitModuleLoader: () => Promise.resolve(new CircuitModule.PlayBuildModule([])),
-    circuitModuleUnloader: () => Promise.resolve(),
-    scriptLoader: () => Promise.resolve(),
-    scriptSaver: () => Promise.resolve(),
+    circuitModuleLoader: async () => new CircuitModule.PlayBuildModule([]),
+    circuitModuleUnloader: async () => {},
+    scriptLoader: async () => {},
+    scriptSaver: async () => {},
   }, props));
 }
 
@@ -21,7 +21,7 @@ describe('Environment', () => {
 
     it('create new variable', async () => {
       const m = new CircuitModule.PlayBuildModule([]);
-      const f = mock.fn(() => Promise.resolve(m));
+      const f = mock.fn(async () => m);
       const env = TestEnvironment({ circuitModuleLoader: f });
       await env.exec(':new x Module');
       const x = env.variableTable.x;
@@ -57,11 +57,11 @@ describe('Environment', () => {
 
     it('bind circuit module members', async () => {
       const env = TestEnvironment({
-        circuitModuleLoader: () => {
-          return Promise.resolve(new CircuitModule.PlayBuildModule([
+        circuitModuleLoader: async () => {
+          return new CircuitModule.PlayBuildModule([
             { name: 'a', type: 'data' },
             { name: 'b', type: 'data' },
-          ]));
+          ]);
         },
       });
       CircuitModule.bind = mock.fn(CircuitModule.bind);
@@ -79,11 +79,11 @@ describe('Environment', () => {
 
     it('unbind circuit module members', async () => {
       const env = TestEnvironment({
-        circuitModuleLoader: () => {
-          return Promise.resolve(new CircuitModule.PlayBuildModule([
+        circuitModuleLoader: async () => {
+          return new CircuitModule.PlayBuildModule([
             { name: 'a', type: 'data' },
             { name: 'b', type: 'data' },
-          ]));
+          ]);
         },
       });
       CircuitModule.unbind = mock.fn(CircuitModule.unbind);
@@ -102,10 +102,10 @@ describe('Environment', () => {
 
     it('send data to a member of circuit module', async () => {
       const env = TestEnvironment({
-        circuitModuleLoader: () => {
-          return Promise.resolve(new CircuitModule.PlayBuildModule([
+        circuitModuleLoader: async () => {
+          return new CircuitModule.PlayBuildModule([
             { name: 'a', type: 'data' },
-          ]));
+          ]);
         },
       });
       await env.exec([
@@ -117,7 +117,7 @@ describe('Environment', () => {
     });
 
     it('delete variable', async () => {
-      const f = mock.fn(() => Promise.resolve());
+      const f = mock.fn(async () => {});
       const env = TestEnvironment({ circuitModuleUnloader: f });
       await env.exec([
         ':new x Module',
@@ -129,11 +129,11 @@ describe('Environment', () => {
 
     it('unbind all circuit module members on deleting variable', async () => {
       const env = TestEnvironment({
-        circuitModuleLoader: (variableName, moduleName) => {
-          return Promise.resolve(new CircuitModule.PlayBuildModule([
+        circuitModuleLoader: async (variableName, moduleName) => {
+          return new CircuitModule.PlayBuildModule([
             { name: 'a', type: 'data' },
             { name: 'b', type: 'data' },
-          ]));
+          ]);
         },
       });
       let x, y, z;
@@ -169,7 +169,7 @@ describe('Environment', () => {
     });
 
     it('reset', async () => {
-      const f = mock.fn(() => Promise.resolve());
+      const f = mock.fn(async () => {});
       const env = TestEnvironment({ circuitModuleUnloader: f });
       await env.exec([
         ':new x Module',
@@ -181,11 +181,11 @@ describe('Environment', () => {
     });
 
     it('load command', async () => {
-      const f = mock.fn(() => {
-        return Promise.resolve({
+      const f = mock.fn(async () => {
+        return {
           text: ':new x Module',
           fileName: 'test.pb',
-        });
+        };
       });
       const env = TestEnvironment({ scriptLoader: f });
       await env.exec(':load /path/to/script');
@@ -194,7 +194,7 @@ describe('Environment', () => {
     });
 
     it('save command', async () => {
-      const f = mock.fn(() => Promise.resolve());
+      const f = mock.fn(async () => {});
       const env = TestEnvironment({ scriptSaver: f });
       await env.exec([
         ':new x Module',
