@@ -7,17 +7,17 @@ import { Environment } from '../models/environment.js';
 import { FileInput } from './file-input.js';
 
 export class Main extends jCore.Component {
-  constructor(props) {
-    super(props);
+  constructor(el) {
+    super(el);
     this.env = new Environment({
       circuitModuleLoader: this.circuitModuleLoader.bind(this),
       circuitModuleUnloader: this.circuitModuleUnloader.bind(this),
       scriptLoader: this.scriptLoader.bind(this),
       scriptSaver: this.scriptSaver.bind(this),
     });
-    this.commandInput = new CommandInput({ element: this.findElement('.command-input') });
-    this.fileInput = new FileInput({ element: this.findElement('.file-input') });
-    this.content = new Content({ element: this.findElement('.content') });
+    this.commandInput = new CommandInput(dom.find(this.el, '.command-input'));
+    this.fileInput = new FileInput(dom.find(this.el, '.file-input'));
+    this.content = new Content(dom.find(this.el, '.content'));
     this.oninit();
   }
 

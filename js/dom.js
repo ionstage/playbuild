@@ -14,6 +14,10 @@ export class dom {
     return el;
   }
 
+  static find(el, selectors) {
+    return el.querySelector(selectors);
+  }
+
   static attr(el, props) {
     Object.keys(props).forEach(key => {
       el.setAttribute(key, props[key]);

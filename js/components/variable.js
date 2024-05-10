@@ -3,19 +3,19 @@ import { dom } from '../dom.js';
 
 export class Variable extends jCore.Component {
   constructor(props) {
-    super(props);
+    super();
     this.name = this.prop(props.name);
     this.moduleName = this.prop(props.moduleName);
-    this.content = new VariableContent({ element: this.findElement('.variable-content') });
+    this.content = new VariableContent(dom.find(this.el, '.variable-content'));
     this.oninit();
   }
 
   nameElement() {
-    return this.findElement('.variable-name');
+    return dom.find(this.el, '.variable-name');
   }
 
   moduleNameElement() {
-    return this.findElement('.variable-module-name');
+    return dom.find(this.el, '.variable-module-name');
   }
 
   contentUrl() {
@@ -51,12 +51,12 @@ export class Variable extends jCore.Component {
 }
 
 class VariableContent extends jCore.Component {
-  constructor(props) {
-    super(props);
+  constructor(el) {
+    super(el);
   }
 
   contentWindow() {
-    return dom.contentWindow(this.element());
+    return dom.contentWindow(this.el);
   }
 
   circuitModule() {
@@ -67,15 +67,15 @@ class VariableContent extends jCore.Component {
   async load(url) {
     const circuitModule = await new Promise((resolve, reject) => {
       const timeoutID = setTimeout(reject, 30 * 1000, new Error('PlayBuildScript runtime error: Load timeout for content'));
-      dom.once(this.element(), 'load', () => {
+      dom.once(this.el, 'load', () => {
         clearTimeout(timeoutID);
         resolve(this.circuitModule());
       });
-      dom.attr(this.element(), { src: url });
+      dom.attr(this.el, { src: url });
     });
     if (!circuitModule) {
       throw new Error('PlayBuildScript runtime error: Invalid circuit module');
     }
-    dom.css(this.element(), { height: dom.contentHeight(this.element()) + 'px' });
+    dom.css(this.el, { height: dom.contentHeight(this.el) + 'px' });
   }
 }

@@ -2,8 +2,8 @@ import { jCore } from '../bundle/jcore.js';
 import { dom } from '../dom.js';
 
 export class CommandInput extends jCore.Component {
-  constructor(props) {
-    super(props);
+  constructor(el) {
+    super(el);
     this.history = new CommandInputHistory({
       size: 100,
       key: 'playbuild/input-history',
@@ -12,23 +12,23 @@ export class CommandInput extends jCore.Component {
   }
 
   text(value) {
-    return dom.value(this.element(), value);
+    return dom.value(this.el, value);
   }
 
   disabled(value) {
-    dom.disabled(this.element(), value);
+    dom.disabled(this.el, value);
   }
 
   isError(value) {
-    dom.toggleClass(this.element(), 'error', value);
+    dom.toggleClass(this.el, 'error', value);
   }
 
   focus() {
-    dom.focus(this.element());
+    dom.focus(this.el);
   }
 
   blur() {
-    dom.blur(this.element());
+    dom.blur(this.el);
   }
 
   done(error) {
@@ -38,7 +38,7 @@ export class CommandInput extends jCore.Component {
       this.text('');
     } else {
       this.isError(true);
-      dom.once(this.element(), 'input', this.oninput.bind(this));
+      dom.once(this.el, 'input', this.oninput.bind(this));
     }
     this.disabled(false);
     this.focus();
@@ -47,7 +47,7 @@ export class CommandInput extends jCore.Component {
   oninit() {
     this.history.load();
     this.focus();
-    dom.on(this.element(), 'keydown', this.onkeydown.bind(this));
+    dom.on(this.el, 'keydown', this.onkeydown.bind(this));
   }
 
   onkeydown(event) {

@@ -14,7 +14,7 @@
   "dependencies": {
     "circuit": "^1.2.0",
     "file-saver": "^2.0.5",
-    "jcore": "^0.3.1"
+    "jcore": "^0.4.7"
   },
   "devDependencies": {
     "esbuild": "^0.21.1"

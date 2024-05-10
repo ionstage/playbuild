@@ -6,7 +6,7 @@ var __commonJS = (cb, mod) => function __require() {
 // node_modules/jcore/jcore.js
 var require_jcore = __commonJS({
   "node_modules/jcore/jcore.js"(exports, module) {
-    (function(global) {
+    (function() {
       "use strict";
       if (!window.requestAnimationFrame) {
         window.requestAnimationFrame = function(callback) {
@@ -24,130 +24,252 @@ var require_jcore = __commonJS({
         });
       };
       var dom = {};
-      dom.rect = function(el) {
-        return el.getBoundingClientRect();
-      };
-      dom.offsetLeft = function(el) {
-        return dom.rect(el).left - el.scrollLeft - dom.rect(document.body).left;
-      };
-      dom.offsetTop = function(el) {
-        return dom.rect(el).top - el.scrollTop - dom.rect(document.body).top;
-      };
-      dom.on = function(el, type, listener, useCapture) {
-        el.addEventListener(type, listener, !!useCapture);
-      };
-      dom.off = function(el, type, listener, useCapture) {
-        el.removeEventListener(type, listener, !!useCapture);
-      };
-      dom.supportsTouch = function() {
-        return "ontouchstart" in window || typeof DocumentTouch !== "undefined" && document instanceof DocumentTouch;
-      };
-      dom.changedTouch = function(event) {
-        return dom.supportsTouch() && "changedTouches" in event ? event.changedTouches[0] : null;
-      };
-      dom.eventType = function(name) {
-        switch (name) {
-          case "start":
-            return dom.supportsTouch() ? "touchstart" : "mousedown";
-          case "move":
-            return dom.supportsTouch() ? "touchmove" : "mousemove";
-          case "end":
-            return dom.supportsTouch() ? "touchend" : "mouseup";
-          default:
-            throw new Error("Invalid event type");
-        }
-      };
-      dom.pageX = function(event) {
-        return (dom.changedTouch(event) || event).pageX;
-      };
-      dom.pageY = function(event) {
-        return (dom.changedTouch(event) || event).pageY;
-      };
-      dom.clientX = function(event) {
-        return (dom.changedTouch(event) || event).clientX;
-      };
-      dom.clientY = function(event) {
-        return (dom.changedTouch(event) || event).clientY;
-      };
-      dom.identifier = function(event) {
-        var touch = dom.changedTouch(event);
-        return touch ? touch.identifier : null;
-      };
       dom.Draggable = function() {
-        var Draggable2 = function(element) {
-          this.element = element;
-          this.start = this.start.bind(this);
-          this.move = this.move.bind(this);
-          this.end = this.end.bind(this);
+        var Draggable2 = function(el) {
+          this.el = el;
           this.onstart = null;
           this.onmove = null;
           this.onend = null;
-          this.lock = false;
-          this.identifier = null;
-          this.startPageX = 0;
-          this.startPageY = 0;
+          this.onmousedown = this.onmousedown.bind(this);
+          this.onmousemove = this.onmousemove.bind(this);
+          this.onmouseup = this.onmouseup.bind(this);
+          this.ontouchstart = this.ontouchstart.bind(this);
+          this.ontouchmove = this.ontouchmove.bind(this);
+          this.ontouchend = this.ontouchend.bind(this);
+          this.pointers = {};
+        };
+        Draggable2.IDENTIFIER_MOUSE = 0;
+        Draggable2.Pointer = function(identifier, pageX, pageY, scroll, onscroll) {
+          this.identifier = identifier;
+          this.startPageX = pageX;
+          this.startPageY = pageY;
+          this.startScrollX = scroll.x;
+          this.startScrollY = scroll.y;
+          this.startScrollWidth = scroll.width;
+          this.startScrollHeight = scroll.height;
+          this.dScrollX = 0;
+          this.dScrollY = 0;
           this.context = {};
+          this.onscroll = onscroll;
+        };
+        Draggable2.debounce = function(func, delay) {
+          var t = 0;
+          var ctx = null;
+          var args = null;
+          return function() {
+            ctx = this;
+            args = arguments;
+            if (t) {
+              clearTimeout(t);
+            }
+            t = setTimeout(function() {
+              func.apply(ctx, args);
+              t = 0;
+              ctx = null;
+              args = null;
+            }, delay);
+          };
+        };
+        Draggable2.supportsTouch = function() {
+          return "ontouchstart" in window || typeof DocumentTouch !== "undefined" && document instanceof DocumentTouch;
+        };
+        Draggable2.getOffset = function(el) {
+          var rect = el.getBoundingClientRect();
+          var bodyRect = document.body.getBoundingClientRect();
+          var bodyStyle = window.getComputedStyle(document.body);
+          var x = rect.left - el.scrollLeft - bodyRect.left + parseInt(bodyStyle.marginLeft, 10);
+          var y = rect.top - el.scrollTop - bodyRect.top + parseInt(bodyStyle.marginTop, 10);
+          return { x, y };
+        };
+        Draggable2.getScrollOffset = function(el) {
+          var x = 0;
+          var y = 0;
+          var width = 0;
+          var height = 0;
+          el = el.parentNode;
+          while (el && el !== document && el !== document.documentElement) {
+            x += el.scrollLeft || 0;
+            y += el.scrollTop || 0;
+            width += el.scrollWidth - el.clientWidth || 0;
+            height += el.scrollHeight - el.clientHeight || 0;
+            el = el.parentNode;
+          }
+          return {
+            x,
+            y,
+            width,
+            height
+          };
+        };
+        Draggable2.prototype.createPointer = function(identifier, event) {
+          var scroll = Draggable2.getScrollOffset(this.el);
+          var onscroll = Draggable2.debounce(this.onscroll.bind(this, identifier), 0);
+          return new Draggable2.Pointer(identifier, event.pageX, event.pageY, scroll, onscroll);
+        };
+        Draggable2.prototype.addPointer = function(p) {
+          document.addEventListener("scroll", p.onscroll, true);
+          this.pointers[String(p.identifier)] = p;
+        };
+        Draggable2.prototype.removePointer = function(p) {
+          document.removeEventListener("scroll", p.onscroll, true);
+          p.context = null;
+          p.onscroll = null;
+          delete this.pointers[String(p.identifier)];
+        };
+        Draggable2.prototype.removeAllPointers = function() {
+          Object.keys(this.pointers).forEach(function(id) {
+            this.removePointer(this.pointers[id]);
+          }, this);
+        };
+        Draggable2.prototype.hasPointer = function() {
+          return Object.keys(this.pointers).length !== 0;
+        };
+        Draggable2.prototype.findPointer = function(identifier) {
+          return this.pointers[String(identifier)] || null;
+        };
+        Draggable2.prototype.resolveUnhandledTouches = function(event) {
+          var ids = Object.keys(this.pointers);
+          if (ids.length === 0) {
+            return;
+          }
+          ids.forEach(function(id) {
+            var p = this.pointers[id];
+            for (var i = 0, len = event.touches.length; i < len; i++) {
+              if (event.touches[i].identifier === p.identifier) {
+                return;
+              }
+            }
+            var dx = event.pageX - p.startPageX + p.dScrollX;
+            var dy = event.pageY - p.startPageY + p.dScrollY;
+            this.onend.call(null, dx, dy, event, p.context);
+            this.removePointer(p);
+          }, this);
         };
         Draggable2.prototype.enable = function(listeners) {
           this.onstart = listeners.onstart;
           this.onmove = listeners.onmove;
           this.onend = listeners.onend;
-          dom.on(this.element, dom.eventType("start"), this.start);
+          var type = Draggable2.supportsTouch() ? "touchstart" : "mousedown";
+          this.el.addEventListener(type, this["on" + type], { passive: false });
         };
         Draggable2.prototype.disable = function() {
-          dom.off(this.element, dom.eventType("start"), this.start);
-          dom.off(document, dom.eventType("move"), this.move);
-          dom.off(document, dom.eventType("end"), this.end);
-          this.onstart = null;
-          this.onmove = null;
-          this.onend = null;
-          this.lock = false;
-          this.context = {};
+          var supportsTouch = Draggable2.supportsTouch();
+          var startType = supportsTouch ? "touchstart" : "mousedown";
+          var moveType = supportsTouch ? "touchmove" : "mousemove";
+          var endType = supportsTouch ? "touchend" : "mouseup";
+          this.el.removeEventListener(startType, this["on" + startType], { passive: false });
+          document.removeEventListener(moveType, this["on" + moveType]);
+          document.removeEventListener(endType, this["on" + endType]);
+          this.removeAllPointers();
         };
-        Draggable2.prototype.start = function(event) {
-          if (this.lock) {
+        Draggable2.prototype.onmousedown = function(event) {
+          var offset = Draggable2.getOffset(event.target);
+          var x = event.clientX - offset.x;
+          var y = event.clientY - offset.y;
+          var p = this.createPointer(Draggable2.IDENTIFIER_MOUSE, event);
+          this.addPointer(p);
+          this.onstart.call(null, x, y, event, p.context);
+          document.addEventListener("mousemove", this.onmousemove);
+          document.addEventListener("mouseup", this.onmouseup);
+        };
+        Draggable2.prototype.onmousemove = function(event) {
+          var p = this.findPointer(Draggable2.IDENTIFIER_MOUSE);
+          var dx = event.pageX - p.startPageX + p.dScrollX;
+          var dy = event.pageY - p.startPageY + p.dScrollY;
+          this.onmove.call(null, dx, dy, event, p.context);
+        };
+        Draggable2.prototype.onmouseup = function(event) {
+          var p = this.findPointer(Draggable2.IDENTIFIER_MOUSE);
+          var dx = event.pageX - p.startPageX + p.dScrollX;
+          var dy = event.pageY - p.startPageY + p.dScrollY;
+          document.removeEventListener("mousemove", this.onmousemove);
+          document.removeEventListener("mouseup", this.onmouseup);
+          this.onend.call(null, dx, dy, event, p.context);
+          this.removePointer(p);
+        };
+        Draggable2.prototype.ontouchstart = function(event) {
+          this.resolveUnhandledTouches(event);
+          var hasPointer = this.hasPointer();
+          var touches = event.changedTouches;
+          for (var i = 0, len = touches.length; i < len; i++) {
+            var touch = touches[i];
+            var offset = Draggable2.getOffset(touch.target);
+            var x = touch.clientX - offset.x;
+            var y = touch.clientY - offset.y;
+            var p = this.createPointer(touch.identifier, touch);
+            this.addPointer(p);
+            this.onstart.call(null, x, y, event, p.context);
+          }
+          if (!hasPointer) {
+            document.addEventListener("touchmove", this.ontouchmove);
+            document.addEventListener("touchend", this.ontouchend);
+          }
+        };
+        Draggable2.prototype.ontouchmove = function(event) {
+          var touches = event.changedTouches;
+          for (var i = 0, len = touches.length; i < len; i++) {
+            var touch = touches[i];
+            var p = this.findPointer(touch.identifier);
+            if (p === null) {
+              continue;
+            }
+            var dx = touch.pageX - p.startPageX + p.dScrollX;
+            var dy = touch.pageY - p.startPageY + p.dScrollY;
+            this.onmove.call(null, dx, dy, event, p.context);
+          }
+        };
+        Draggable2.prototype.ontouchend = function(event) {
+          var touches = event.changedTouches;
+          for (var i = 0, len = touches.length; i < len; i++) {
+            var touch = touches[i];
+            var p = this.findPointer(touch.identifier);
+            if (p === null) {
+              continue;
+            }
+            var dx = touch.pageX - p.startPageX + p.dScrollX;
+            var dy = touch.pageY - p.startPageY + p.dScrollY;
+            this.onend.call(null, dx, dy, event, p.context);
+            this.removePointer(p);
+          }
+          if (!this.hasPointer()) {
+            document.removeEventListener("touchmove", this.ontouchmove);
+            document.removeEventListener("touchend", this.ontouchend);
+          }
+        };
+        Draggable2.prototype.onscroll = function(identifier) {
+          var p = this.findPointer(identifier);
+          if (p === null) {
             return;
           }
-          this.lock = true;
-          this.identifier = dom.identifier(event);
-          this.startPageX = dom.pageX(event);
-          this.startPageY = dom.pageY(event);
-          var x = dom.clientX(event) - dom.offsetLeft(this.element);
-          var y = dom.clientY(event) - dom.offsetTop(this.element);
-          this.onstart.call(null, x, y, event, this.context);
-          dom.on(document, dom.eventType("move"), this.move);
-          dom.on(document, dom.eventType("end"), this.end);
-        };
-        Draggable2.prototype.move = function(event) {
-          if (this.identifier && this.identifier !== dom.identifier(event)) {
-            return;
-          }
-          var dx = dom.pageX(event) - this.startPageX;
-          var dy = dom.pageY(event) - this.startPageY;
-          this.onmove.call(null, dx, dy, event, this.context);
-        };
-        Draggable2.prototype.end = function(event) {
-          if (this.identifier && this.identifier !== dom.identifier(event)) {
-            return;
-          }
-          dom.off(document, dom.eventType("move"), this.move);
-          dom.off(document, dom.eventType("end"), this.end);
-          var dx = dom.pageX(event) - this.startPageX;
-          var dy = dom.pageY(event) - this.startPageY;
-          this.onend.call(null, dx, dy, event, this.context);
-          this.lock = false;
+          var scrollOffset = Draggable2.getScrollOffset(this.el);
+          var dScrollWidth = scrollOffset.width - p.startScrollWidth;
+          var dScrollHeight = scrollOffset.height - p.startScrollHeight;
+          p.dScrollX = scrollOffset.x - p.startScrollX - dScrollWidth;
+          p.dScrollY = scrollOffset.y - p.startScrollY - dScrollHeight;
         };
         return Draggable2;
       }();
-      var Component = function(props) {
-        this.element = this.prop(props.element || this.render());
-        this.parentElement = this.prop(this.element().parentNode);
-        this.relations = [];
-        this.cache = {};
-        this.listeners = {};
+      var Component = function(el) {
+        this.el = el || this.render();
+        this.parentElement = this.prop(this.el.parentNode);
+        this._relations = [];
+        this._cache = {};
+        this._listeners = {};
       };
-      Component.prototype.findElement = function(selectors) {
-        return this.element().querySelector(selectors);
+      Component.prototype.element = function(el) {
+        if (typeof el === "undefined") {
+          return this.el;
+        }
+        if (el === this.el) {
+          return;
+        }
+        if (!el) {
+          throw new Error("missing element");
+        }
+        this.el = el;
+        this.parentElement(this.el.parentNode);
+        this._cache = {};
+        this.markDirty();
       };
       Component.prototype.prop = function(initialValue) {
         var cache = initialValue;
@@ -163,26 +285,35 @@ var require_jcore = __commonJS({
         };
       };
       Component.prototype.addRelation = function(relation) {
-        if (this.relations.indexOf(relation) === -1) {
-          this.relations.push(relation);
+        if (this._relations.indexOf(relation) === -1) {
+          this._relations.push(relation);
         }
       };
       Component.prototype.removeRelation = function(relation) {
-        var index = this.relations.indexOf(relation);
+        var index = this._relations.indexOf(relation);
         if (index !== -1) {
-          this.relations.splice(index, 1);
+          this._relations.splice(index, 1);
         }
       };
       Component.prototype.on = function(type, listener) {
-        if (!this.listeners[type]) {
-          this.listeners[type] = [];
+        if (!this._listeners[type]) {
+          this._listeners[type] = [];
         }
-        this.listeners[type].push(listener);
+        this._listeners[type].push(listener);
+      };
+      Component.prototype.off = function(type, listener) {
+        if (!this._listeners[type]) {
+          return;
+        }
+        var index = this._listeners[type].lastIndexOf(listener);
+        if (index !== -1) {
+          this._listeners[type].splice(index, 1);
+        }
       };
       Component.prototype.emit = function() {
         var args = Array.prototype.slice.call(arguments);
         var type = args.shift();
-        var listeners = this.listeners[type];
+        var listeners = this._listeners[type];
         if (!listeners) {
           return;
         }
@@ -191,22 +322,22 @@ var require_jcore = __commonJS({
         }
       };
       Component.prototype.removeAllListeners = function(type) {
-        if (this.listeners[type]) {
-          delete this.listeners[type];
+        if (this._listeners[type]) {
+          delete this._listeners[type];
         } else {
-          this.listeners = {};
+          this._listeners = {};
         }
       };
       Component.prototype.redraw = function() {
-        var element = this.element();
+        var el = this.el;
         var parentElement = this.parentElement();
         this.onredraw();
-        if (parentElement && parentElement !== element.parentNode) {
+        if (parentElement && parentElement !== el.parentNode) {
           this.onappend();
-          parentElement.appendChild(element);
-        } else if (!parentElement && element.parentNode) {
+          parentElement.appendChild(el);
+        } else if (!parentElement && el.parentNode) {
           this.onremove();
-          element.parentNode.removeChild(element);
+          el.parentNode.removeChild(el);
         }
       };
       Component.prototype.redrawBy = function() {
@@ -217,8 +348,8 @@ var require_jcore = __commonJS({
         for (var i = 0, len = args.length; i < len; i++) {
           var key = args[i];
           var value = this[key]();
-          if (value !== this.cache[key]) {
-            this.cache[key] = value;
+          if (value !== this._cache[key]) {
+            this._cache[key] = value;
             isChanged = true;
           }
           values.push(value);
@@ -258,7 +389,7 @@ var require_jcore = __commonJS({
         Main.prototype.update = function(index) {
           for (var ci = index, clen = this.dirtyComponents.length; ci < clen; ci++) {
             var component = this.dirtyComponents[ci];
-            var relations = component.relations;
+            var relations = component._relations;
             for (var ri = 0, rlen = relations.length; ri < rlen; ri++) {
               relations[ri].update(component);
             }
@@ -280,10 +411,9 @@ var require_jcore = __commonJS({
       Component.inherits = function(initializer) {
         var superCtor = this;
         var ctor = function() {
-          var props = arguments.length !== 0 ? arguments[0] : {};
-          superCtor.call(this, props);
+          superCtor.apply(this, arguments);
           if (typeof initializer === "function") {
-            initializer.call(this, props);
+            initializer.apply(this, arguments);
           }
           if (this.constructor === ctor) {
             this.oninit();
@@ -301,26 +431,25 @@ var require_jcore = __commonJS({
         var superCtor = this;
         var ctor = function() {
           if (typeof initializer === "function") {
-            var props = arguments.length !== 0 ? arguments[0] : {};
-            initializer.call(this, props);
+            initializer.apply(this, arguments);
           }
         };
         inherits(ctor, superCtor);
         return ctor;
       };
       var Draggable = function(component) {
-        this.component = component;
-        this.draggable = new dom.Draggable(component.element());
+        this._component = component;
+        this._draggable = new dom.Draggable(component.el);
       };
       Draggable.prototype.enable = function() {
-        this.draggable.enable({
-          onstart: this.onstart.bind(this, this.component),
-          onmove: this.onmove.bind(this, this.component),
-          onend: this.onend.bind(this, this.component)
+        this._draggable.enable({
+          onstart: this.onstart.bind(this, this._component),
+          onmove: this.onmove.bind(this, this._component),
+          onend: this.onend.bind(this, this._component)
         });
       };
       Draggable.prototype.disable = function() {
-        this.draggable.disable();
+        this._draggable.disable();
       };
       Draggable.prototype.onstart = function(component, x, y, event, context) {
       };
@@ -328,10 +457,13 @@ var require_jcore = __commonJS({
       };
       Draggable.prototype.onend = function(component, dx, dy, event, context) {
       };
-      Draggable.inherits = function() {
+      Draggable.inherits = function(initializer) {
         var superCtor = this;
-        var ctor = function(component) {
-          superCtor.call(this, component);
+        var ctor = function() {
+          superCtor.apply(this, arguments);
+          if (typeof initializer === "function") {
+            initializer.apply(this, arguments);
+          }
         };
         inherits(ctor, superCtor);
         return ctor;
@@ -344,9 +476,9 @@ var require_jcore = __commonJS({
       if (typeof module !== "undefined" && module.exports) {
         module.exports = jCore2;
       } else {
-        global.jCore = jCore2;
+        window.jCore = jCore2;
       }
-    })(exports);
+    })();
   }
 });
 

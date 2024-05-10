@@ -2,14 +2,14 @@ import { jCore } from '../bundle/jcore.js';
 import { Variable } from './variable.js';
 
 export class Content extends jCore.Component {
-  constructor(props) {
-    super(props);
+  constructor(el) {
+    super(el);
     this.variableTable = {};
   }
 
   async loadVariable(name, moduleName) {
     const variable = new Variable({ name, moduleName });
-    variable.parentElement(this.element());
+    variable.parentElement(this.el);
     variable.redraw();
     try {
       await variable.load();
