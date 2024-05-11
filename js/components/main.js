@@ -50,10 +50,12 @@ export class Main extends jCore.Component {
   }
 
   _oninit() {
+    this._commandInput.focus();
     this._commandInput.on('exec', this._onexec.bind(this));
   }
 
   async _onexec(text, done) {
+    this._commandInput.disabled(true);
     try {
       await this._env.exec(text);
       done();
@@ -61,5 +63,7 @@ export class Main extends jCore.Component {
       console.error(e);
       done(e);
     }
+    this._commandInput.disabled(false);
+    this._commandInput.focus();
   }
 }

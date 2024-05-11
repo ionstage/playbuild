@@ -15,6 +15,10 @@ export class CommandInput extends jCore.Component {
     dom.disabled(this.el, value);
   }
 
+  focus() {
+    dom.focus(this.el);
+  }
+
   blur() {
     dom.blur(this.el);
   }
@@ -27,26 +31,8 @@ export class CommandInput extends jCore.Component {
     dom.toggleClass(this.el, 'error', value);
   }
 
-  _focus() {
-    dom.focus(this.el);
-  }
-
-  _done(error) {
-    if (!error) {
-      this._history.push(this._text());
-      this._history.save();
-      this._text('');
-    } else {
-      this._isError(true);
-      dom.once(this.el, 'input', this._oninput.bind(this));
-    }
-    this.disabled(false);
-    this._focus();
-  }
-
   _oninit() {
     this._history.load();
-    this._focus();
     dom.on(this.el, 'keydown', this._onkeydown.bind(this));
   }
 
@@ -61,8 +47,7 @@ export class CommandInput extends jCore.Component {
   _onenter() {
     const text = this._text();
     if (text) {
-      this.disabled(true);
-      this.emit('exec', text, this._done.bind(this));
+      this.emit('exec', text, this._onexec.bind(this));
     }
   }
 
@@ -74,6 +59,17 @@ export class CommandInput extends jCore.Component {
   _ondown(event) {
     dom.cancel(event);
     this._text(this._history.forward());
+  }
+
+  _onexec(error) {
+    if (error) {
+      this._isError(true);
+      dom.once(this.el, 'input', this._oninput.bind(this));
+      return;
+    }
+    this._history.push(this._text());
+    this._history.save();
+    this._text('');
   }
 
   _oninput() {
