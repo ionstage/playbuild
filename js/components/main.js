@@ -37,6 +37,9 @@ export class Main extends jCore.Component {
       return this.fileInput.load();
     }
     const res = await fetch('playbuild_scripts/' + path);
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
     const text = await res.text();
     const fileName = path.split('/').pop();
     return { text, fileName };
