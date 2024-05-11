@@ -10,6 +10,10 @@ export class Variable extends jCore.Component {
     this._oninit();
   }
 
+  name() {
+    return this._name();
+  }
+
   render() {
     return dom.render(Variable._HTML_TEXT);
   }

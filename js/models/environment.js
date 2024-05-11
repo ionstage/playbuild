@@ -8,7 +8,7 @@ export class Environment {
     this._circuitModuleUnloader = props.circuitModuleUnloader;
     this._scriptLoader = props.scriptLoader;
     this._scriptSaver = props.scriptSaver;
-    this._variableTable = {};
+    this._variables = [];
     this._bindings = [];
   }
 
@@ -26,8 +26,12 @@ export class Environment {
     }
   }
 
-  _findVariable(member) {
-    return Object.values(this._variableTable).find(variable => {
+  _findVariable(name) {
+    return this._variables.find(variable => (variable.name === name));
+  }
+
+  _findVariableByMember(member) {
+    return this._variables.find(variable => {
       return (variable.circuitModule.get(member.name) === member);
     });
   }
@@ -39,10 +43,11 @@ export class Environment {
   }
 
   _fetchMember(variableName, memberName) {
-    if (!this._variableTable.hasOwnProperty(variableName)) {
+    const variable = this._findVariable(variableName);
+    if (!variable) {
       throw new Error('PlayBuildScript runtime error: variable "' + variableName + '" is not defined');
     }
-    const member = this._variableTable[variableName].circuitModule.get(memberName);
+    const member = variable.circuitModule.get(memberName);
     if (!member) {
       throw new Error('PlayBuildScript runtime error: member "' + variableName + '.' + memberName + '" is not defined');
     }
@@ -54,7 +59,7 @@ export class Environment {
     if (!circuitModule) {
       throw new Error('PlayBuildScript runtime error: Invalid circuit module');
     }
-    this._variableTable[name] = new EnvironmentVariable({ name, moduleName, circuitModule });
+    this._variables.push(new EnvironmentVariable({ name, moduleName, circuitModule }));
   }
 
   async _unloadVariable(name) {
@@ -63,14 +68,14 @@ export class Environment {
   }
 
   _deleteVariable(name) {
-    const variable = this._variableTable[name];
+    const variable = this._findVariable(name);
     this._bindings.filter(binding => {
-      return (this._findVariable(binding.sourceMember) === variable || this._findVariable(binding.targetMember) === variable);
+      return (this._findVariableByMember(binding.sourceMember) === variable || this._findVariableByMember(binding.targetMember) === variable);
     }).forEach(binding => {
       CircuitModule.unbind(binding.sourceMember, binding.targetMember);
       helper.remove(this._bindings, binding);
     });
-    delete this._variableTable[name];
+    helper.remove(this._variables, variable);
   }
 
   _bind(sourceMember, targetMember) {
@@ -104,19 +109,19 @@ export class Environment {
   }
 
   _generateScript() {
-    const variableScript = Object.values(this._variableTable).map(variable => {
+    const variableScript = this._variables.map(variable => {
       return variable.name + ':' + variable.moduleName;
     }).join('\n');
     const bindingScript = this._bindings.map(binding => {
-      return (this._findVariable(binding.sourceMember).name + '.' + binding.sourceMember.name + ' >> ' +
-              this._findVariable(binding.targetMember).name + '.' + binding.targetMember.name);
+      return (this._findVariableByMember(binding.sourceMember).name + '.' + binding.sourceMember.name + ' >> ' +
+              this._findVariableByMember(binding.targetMember).name + '.' + binding.targetMember.name);
     }).join('\n');
     return (variableScript + '\n' + bindingScript).trim() + '\n';
   }
 
   static _EXEC_TABLE = {
     new(variableName, moduleName) {
-      if (this._variableTable.hasOwnProperty(variableName)) {
+      if (this._findVariable(variableName)) {
         throw new Error('PlayBuildScript runtime error: variable "' + variableName + '" is already defined');
       }
       return this._loadVariable(variableName, moduleName);
@@ -135,14 +140,14 @@ export class Environment {
       this._fetchMember(variableName, memberName)(dataText);
     },
     delete(variableName) {
-      if (!this._variableTable.hasOwnProperty(variableName)) {
+      if (!this._findVariable(variableName)) {
         throw new Error('PlayBuildScript runtime error: variable "' + variableName + '" is not defined');
       }
       return this._unloadVariable(variableName);
     },
     reset() {
-      return Promise.all(Object.keys(this._variableTable).map(variableName => {
-        return this._unloadVariable(variableName);
+      return Promise.all(this._variables.map(variable => {
+        return this._unloadVariable(variable.name);
       }));
     },
     async load(filePath) {
