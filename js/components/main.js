@@ -9,32 +9,32 @@ import { FileInput } from './file-input.js';
 export class Main extends jCore.Component {
   constructor(el) {
     super(el);
-    this.env = new Environment({
-      circuitModuleLoader: this.circuitModuleLoader.bind(this),
-      circuitModuleUnloader: this.circuitModuleUnloader.bind(this),
-      scriptLoader: this.scriptLoader.bind(this),
-      scriptSaver: this.scriptSaver.bind(this),
+    this._env = new Environment({
+      circuitModuleLoader: this._circuitModuleLoader.bind(this),
+      circuitModuleUnloader: this._circuitModuleUnloader.bind(this),
+      scriptLoader: this._scriptLoader.bind(this),
+      scriptSaver: this._scriptSaver.bind(this),
     });
-    this.commandInput = new CommandInput(dom.find(this.el, '.command-input'));
-    this.fileInput = new FileInput(dom.find(this.el, '.file-input'));
-    this.content = new Content(dom.find(this.el, '.content'));
-    this.oninit();
+    this._commandInput = new CommandInput(dom.find(this.el, '.command-input'));
+    this._fileInput = new FileInput(dom.find(this.el, '.file-input'));
+    this._content = new Content(dom.find(this.el, '.content'));
+    this._oninit();
   }
 
-  async circuitModuleLoader(variableName, moduleName) {
-    const variable = await this.content.loadVariable(variableName, moduleName);
+  async _circuitModuleLoader(variableName, moduleName) {
+    const variable = await this._content.loadVariable(variableName, moduleName);
     return variable.circuitModule();
   }
 
-  async circuitModuleUnloader(variableName) {
-    this.content.deleteVariable(variableName);
+  async _circuitModuleUnloader(variableName) {
+    this._content.deleteVariable(variableName);
   }
 
-  async scriptLoader(path) {
+  async _scriptLoader(path) {
     if (!path) {
-      this.commandInput.disabled(false);
-      this.commandInput.blur();
-      return this.fileInput.load();
+      this._commandInput.disabled(false);
+      this._commandInput.blur();
+      return this._fileInput.load();
     }
     const res = await fetch('playbuild_scripts/' + path);
     if (!res.ok) {
@@ -45,17 +45,17 @@ export class Main extends jCore.Component {
     return { text, fileName };
   }
 
-  async scriptSaver(path, text) {
+  async _scriptSaver(path, text) {
     FileSaver.saveAs(new Blob([text], { type: 'plain/text' }), path);
   }
 
-  oninit() {
-    this.commandInput.on('exec', this.onexec.bind(this));
+  _oninit() {
+    this._commandInput.on('exec', this._onexec.bind(this));
   }
 
-  async onexec(text, done) {
+  async _onexec(text, done) {
     try {
-      await this.env.exec(text);
+      await this._env.exec(text);
       done();
     } catch (e) {
       console.error(e);

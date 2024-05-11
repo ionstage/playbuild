@@ -4,83 +4,83 @@ import { dom } from '../dom.js';
 export class CommandInput extends jCore.Component {
   constructor(el) {
     super(el);
-    this.history = new CommandInputHistory({
+    this._history = new CommandInputHistory({
       size: 100,
       key: 'playbuild/input-history',
     });
-    this.oninit();
-  }
-
-  text(value) {
-    return dom.value(this.el, value);
+    this._oninit();
   }
 
   disabled(value) {
     dom.disabled(this.el, value);
   }
 
-  isError(value) {
-    dom.toggleClass(this.el, 'error', value);
-  }
-
-  focus() {
-    dom.focus(this.el);
-  }
-
   blur() {
     dom.blur(this.el);
   }
 
-  done(error) {
+  _text(value) {
+    return dom.value(this.el, value);
+  }
+
+  _isError(value) {
+    dom.toggleClass(this.el, 'error', value);
+  }
+
+  _focus() {
+    dom.focus(this.el);
+  }
+
+  _done(error) {
     if (!error) {
-      this.history.push(this.text());
-      this.history.save();
-      this.text('');
+      this._history.push(this._text());
+      this._history.save();
+      this._text('');
     } else {
-      this.isError(true);
-      dom.once(this.el, 'input', this.oninput.bind(this));
+      this._isError(true);
+      dom.once(this.el, 'input', this._oninput.bind(this));
     }
     this.disabled(false);
-    this.focus();
+    this._focus();
   }
 
-  oninit() {
-    this.history.load();
-    this.focus();
-    dom.on(this.el, 'keydown', this.onkeydown.bind(this));
+  _oninit() {
+    this._history.load();
+    this._focus();
+    dom.on(this.el, 'keydown', this._onkeydown.bind(this));
   }
 
-  onkeydown(event) {
-    const key = CommandInput.#keyDownMap[event.which];
+  _onkeydown(event) {
+    const key = CommandInput._KEY_DOWN_MAP[event.which];
     if (key) {
-      this.isError(false);
-      this['on' + key](event);
+      this._isError(false);
+      this['_on' + key](event);
     }
   }
 
-  onenter() {
-    const text = this.text();
+  _onenter() {
+    const text = this._text();
     if (text) {
       this.disabled(true);
-      this.emit('exec', text, this.done.bind(this));
+      this.emit('exec', text, this._done.bind(this));
     }
   }
 
-  onup(event) {
+  _onup(event) {
     dom.cancel(event);
-    this.text(this.history.back());
+    this._text(this._history.back());
   }
 
-  ondown(event) {
+  _ondown(event) {
     dom.cancel(event);
-    this.text(this.history.forward());
+    this._text(this._history.forward());
   }
 
-  oninput() {
-    this.isError(false);
+  _oninput() {
+    this._isError(false);
   }
 
-  static #keyDownMap = {
+  static _KEY_DOWN_MAP = {
     13: 'enter',
     38: 'up',
     40: 'down',
@@ -89,38 +89,38 @@ export class CommandInput extends jCore.Component {
 
 class CommandInputHistory {
   constructor(props) {
-    this.data = [];
-    this.index = 0;
-    this.size = props.size;
-    this.key = props.key;
-  }
-
-  current() {
-    return this.data[this.index] || '';
+    this._data = [];
+    this._index = 0;
+    this._size = props.size;
+    this._key = props.key;
   }
 
   push(text) {
-    this.data.push(text);
-    this.data.splice(0, this.data.length - this.size);
-    this.index = this.data.length;
+    this._data.push(text);
+    this._data.splice(0, this._data.length - this._size);
+    this._index = this._data.length;
   }
 
   back() {
-    this.index = Math.max(this.index - 1, 0);
-    return this.current();
+    this._index = Math.max(this._index - 1, 0);
+    return this._current();
   }
 
   forward() {
-    this.index = Math.min(this.index + 1, this.data.length);
-    return this.current();
+    this._index = Math.min(this._index + 1, this._data.length);
+    return this._current();
   }
 
   load() {
-    this.data = dom.load(this.key, []);
-    this.index = this.data.length;
+    this._data = dom.load(this._key, []);
+    this._index = this._data.length;
   }
 
   save() {
-    dom.save(this.key, this.data);
+    dom.save(this._key, this._data);
+  }
+
+  _current() {
+    return this._data[this._index] || '';
   }
 }

@@ -4,11 +4,11 @@ const Wrapper = helper.wrapper();
 
 export class CircuitModule {
   constructor(memberTable) {
-    this.memberTable = memberTable;
+    this._memberTable = memberTable;
   }
 
   get(name) {
-    return this.memberTable[name] || null;
+    return this._memberTable[name] || null;
   }
 
   static bind(sourceMember, targetMember) {
@@ -36,15 +36,15 @@ export class CircuitModule {
 class CircuitModuleMember {
   constructor(props) {
     this.callee = circuit[props.type](props.arg);
-    return this.wrapper(props.name);
+    return this._wrapper(props.name);
   }
 
-  call() {
+  _call() {
     return this.callee.apply(this, arguments);
   }
 
-  wrapper(name) {
-    const wrapper = new Wrapper(this, this.call.bind(this));
+  _wrapper(name) {
+    const wrapper = new Wrapper(this, this._call.bind(this));
     return Object.defineProperty(wrapper, 'name', { value: name });
   }
 }

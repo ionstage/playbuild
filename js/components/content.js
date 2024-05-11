@@ -4,7 +4,7 @@ import { Variable } from './variable.js';
 export class Content extends jCore.Component {
   constructor(el) {
     super(el);
-    this.variableTable = {};
+    this._variableTable = {};
   }
 
   async loadVariable(name, moduleName) {
@@ -13,7 +13,7 @@ export class Content extends jCore.Component {
     variable.redraw();
     try {
       await variable.load();
-      this.variableTable[name] = variable;
+      this._variableTable[name] = variable;
       return variable;
     } catch (e) {
       variable.parentElement(null);
@@ -22,7 +22,7 @@ export class Content extends jCore.Component {
   }
 
   deleteVariable(name) {
-    this.variableTable[name].parentElement(null);
-    delete this.variableTable[name];
+    this._variableTable[name].parentElement(null);
+    delete this._variableTable[name];
   }
 }

@@ -9,10 +9,10 @@ export class helper {
   static wrapper = () => {
     return class Wrapper {
       constructor(self, wrapper) {
-        return Object.defineProperty(wrapper, 'unwrap', { value: Wrapper.unwrap.bind(self) });
+        return Object.defineProperty(wrapper, 'unwrap', { value: Wrapper._unwrap.bind(self) });
       }
 
-      static unwrap(key) {
+      static _unwrap(key) {
         return (key === Wrapper.KEY ? this : null);
       }
 

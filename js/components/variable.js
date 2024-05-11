@@ -4,42 +4,42 @@ import { dom } from '../dom.js';
 export class Variable extends jCore.Component {
   constructor(props) {
     super();
-    this.name = this.prop(props.name);
-    this.moduleName = this.prop(props.moduleName);
-    this.content = new VariableContent(dom.find(this.el, '.variable-content'));
-    this.oninit();
-  }
-
-  nameElement() {
-    return dom.find(this.el, '.variable-name');
-  }
-
-  moduleNameElement() {
-    return dom.find(this.el, '.variable-module-name');
-  }
-
-  contentUrl() {
-    return 'playbuild_modules/' + encodeURI(this.moduleName()) + '.html';
-  }
-
-  circuitModule() {
-    return this.content.circuitModule();
+    this._name = this.prop(props.name);
+    this._moduleName = this.prop(props.moduleName);
+    this._content = new VariableContent(dom.find(this.el, '.variable-content'));
+    this._oninit();
   }
 
   render() {
-    return dom.render(Variable.#HTML_TEXT);
+    return dom.render(Variable._HTML_TEXT);
   }
 
-  oninit() {
-    dom.text(this.nameElement(), this.name());
-    dom.text(this.moduleNameElement(), this.moduleName());
+  circuitModule() {
+    return this._content.circuitModule();
   }
 
   load() {
-    return this.content.load(this.contentUrl());
+    return this._content.load(this._contentUrl());
   }
 
-  static #HTML_TEXT = [
+  _nameElement() {
+    return dom.find(this.el, '.variable-name');
+  }
+
+  _moduleNameElement() {
+    return dom.find(this.el, '.variable-module-name');
+  }
+
+  _contentUrl() {
+    return 'playbuild_modules/' + encodeURI(this._moduleName()) + '.html';
+  }
+
+  _oninit() {
+    dom.text(this._nameElement(), this._name());
+    dom.text(this._moduleNameElement(), this._moduleName());
+  }
+
+  static _HTML_TEXT = [
     '<div class="variable">',
       '<div class="variable-header">',
         '<div class="variable-name"></div>',
@@ -55,12 +55,8 @@ class VariableContent extends jCore.Component {
     super(el);
   }
 
-  contentWindow() {
-    return dom.contentWindow(this.el);
-  }
-
   circuitModule() {
-    const playbuild = this.contentWindow().playbuild;
+    const playbuild = this._contentWindow().playbuild;
     return (playbuild && playbuild.exports);
   }
 
@@ -77,5 +73,9 @@ class VariableContent extends jCore.Component {
       throw new Error('PlayBuildScript runtime error: Invalid circuit module');
     }
     dom.css(this.el, { height: dom.contentHeight(this.el) + 'px' });
+  }
+
+  _contentWindow() {
+    return dom.contentWindow(this.el);
   }
 }

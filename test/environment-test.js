@@ -24,7 +24,7 @@ describe('Environment', () => {
       const f = mock.fn(async () => m);
       const env = TestEnvironment({ circuitModuleLoader: f });
       await env.exec(':new x Module');
-      const x = env.variableTable.x;
+      const x = env._variableTable.x;
       assert.strictEqual(x.name, 'x');
       assert.strictEqual(x.moduleName, 'Module');
       assert.strictEqual(x.circuitModule, m);
@@ -70,11 +70,11 @@ describe('Environment', () => {
         ':new y Module',
         ':bind x.a y.b',
       ]);
-      const a = env.variableTable.x.circuitModule.get('a');
-      const b = env.variableTable.y.circuitModule.get('b');
+      const a = env._variableTable.x.circuitModule.get('a');
+      const b = env._variableTable.y.circuitModule.get('b');
       assert.strictEqual(CircuitModule.bind.mock.calls[0].arguments[0], a);
       assert.strictEqual(CircuitModule.bind.mock.calls[0].arguments[1], b);
-      assert.strictEqual(env.bindings.length, 1);
+      assert.strictEqual(env._bindings.length, 1);
     });
 
     it('unbind circuit module members', async () => {
@@ -93,11 +93,11 @@ describe('Environment', () => {
         ':bind x.a y.b',
         ':unbind x.a y.b',
       ]);
-      const a = env.variableTable.x.circuitModule.get('a');
-      const b = env.variableTable.y.circuitModule.get('b');
+      const a = env._variableTable.x.circuitModule.get('a');
+      const b = env._variableTable.y.circuitModule.get('b');
       assert(CircuitModule.unbind.mock.calls[0].arguments[0], a);
       assert(CircuitModule.unbind.mock.calls[0].arguments[1], b);
-      assert.strictEqual(env.bindings.length, 0);
+      assert.strictEqual(env._bindings.length, 0);
     });
 
     it('send data to a member of circuit module', async () => {
@@ -112,7 +112,7 @@ describe('Environment', () => {
         ':new x Module',
         ':send x.a data_text',
       ]);
-      const a = env.variableTable.x.circuitModule.get('a');
+      const a = env._variableTable.x.circuitModule.get('a');
       assert.strictEqual(a(), 'data_text');
     });
 
@@ -123,7 +123,7 @@ describe('Environment', () => {
         ':new x Module',
         ':delete x',
       ]);
-      assert.strictEqual(Object.keys(env.variableTable).length, 0);
+      assert.strictEqual(Object.keys(env._variableTable).length, 0);
       assert.strictEqual(f.mock.callCount(), 1);
     });
 
@@ -149,9 +149,9 @@ describe('Environment', () => {
         ':bind x.b y.b',
         ':bind y.b z.b',
       ]);
-      x = env.variableTable.x;
-      y = env.variableTable.y;
-      z = env.variableTable.z;
+      x = env._variableTable.x;
+      y = env._variableTable.y;
+      z = env._variableTable.z;
       await env.exec(':delete y');
       const calls = CircuitModule.unbind.mock.calls;
       assert.strictEqual(calls[0].arguments[0], x.circuitModule.get('a'));
@@ -176,7 +176,7 @@ describe('Environment', () => {
         ':new y Module',
         ':reset',
       ]);
-      assert.strictEqual(Object.keys(env.variableTable).length, 0);
+      assert.strictEqual(Object.keys(env._variableTable).length, 0);
       assert(f.mock.callCount(), 2);
     });
 
@@ -189,7 +189,7 @@ describe('Environment', () => {
       });
       const env = TestEnvironment({ scriptLoader: f });
       await env.exec(':load /path/to/script');
-      assert(env.variableTable.hasOwnProperty('x'));
+      assert(env._variableTable.hasOwnProperty('x'));
       assert.strictEqual(f.mock.calls[0].arguments[0], '/path/to/script');
     });
 
