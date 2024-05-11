@@ -12,15 +12,15 @@ export class CircuitModule {
   }
 
   static bind(sourceMember, targetMember) {
-    const source = sourceMember.unwrap(Wrapper.KEY).callee;
-    const target = targetMember.unwrap(Wrapper.KEY).callee;
-    circuit.bind(source, target);
+    const s = sourceMember.unwrap(Wrapper.KEY).callee;
+    const t = targetMember.unwrap(Wrapper.KEY).callee;
+    circuit.bind(s, t);
   }
 
   static unbind(sourceMember, targetMember) {
-    const source = sourceMember.unwrap(Wrapper.KEY).callee;
-    const target = targetMember.unwrap(Wrapper.KEY).callee;
-    circuit.unbind(source, target);
+    const s = sourceMember.unwrap(Wrapper.KEY).callee;
+    const t = targetMember.unwrap(Wrapper.KEY).callee;
+    circuit.unbind(s, t);
   }
 
   static PlayBuildModule = class {
@@ -44,7 +44,7 @@ class CircuitModuleMember {
   }
 
   _wrapper(name) {
-    const wrapper = new Wrapper(this, this._call.bind(this));
-    return Object.defineProperty(wrapper, 'name', { value: name });
+    const w = new Wrapper(this, this._call.bind(this));
+    return Object.defineProperty(w, 'name', { value: name });
   }
 }

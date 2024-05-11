@@ -22,8 +22,8 @@ export class Main extends jCore.Component {
   }
 
   async _circuitModuleLoader(variableName, moduleName) {
-    const variable = await this._content.loadVariable(variableName, moduleName);
-    return variable.circuitModule();
+    const v = await this._content.loadVariable(variableName, moduleName);
+    return v.circuitModule();
   }
 
   async _circuitModuleUnloader(variableName) {

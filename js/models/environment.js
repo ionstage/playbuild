@@ -27,31 +27,31 @@ export class Environment {
   }
 
   _findVariable(name) {
-    return this._variables.find(variable => (variable.name === name));
+    return this._variables.find(v => (v.name === name));
   }
 
   _findVariableByMember(member) {
-    return this._variables.find(variable => {
-      return (variable.circuitModule.get(member.name) === member);
+    return this._variables.find(v => {
+      return (v.circuitModule.get(member.name) === member);
     });
   }
 
   _findBinding(sourceMember, targetMember) {
-    return this._bindings.find(binding => {
-      return (binding.sourceMember === sourceMember && binding.targetMember === targetMember);
+    return this._bindings.find(b => {
+      return (b.sourceMember === sourceMember && b.targetMember === targetMember);
     });
   }
 
   _fetchMember(variableName, memberName) {
-    const variable = this._findVariable(variableName);
-    if (!variable) {
+    const v = this._findVariable(variableName);
+    if (!v) {
       throw new Error('PlayBuildScript runtime error: variable "' + variableName + '" is not defined');
     }
-    const member = variable.circuitModule.get(memberName);
-    if (!member) {
+    const m = v.circuitModule.get(memberName);
+    if (!m) {
       throw new Error('PlayBuildScript runtime error: member "' + variableName + '.' + memberName + '" is not defined');
     }
-    return member;
+    return m;
   }
 
   async _loadVariable(name, moduleName) {
@@ -68,14 +68,14 @@ export class Environment {
   }
 
   _deleteVariable(name) {
-    const variable = this._findVariable(name);
-    this._bindings.filter(binding => {
-      return (this._findVariableByMember(binding.sourceMember) === variable || this._findVariableByMember(binding.targetMember) === variable);
-    }).forEach(binding => {
-      CircuitModule.unbind(binding.sourceMember, binding.targetMember);
-      helper.remove(this._bindings, binding);
+    const v = this._findVariable(name);
+    this._bindings.filter(b => {
+      return (this._findVariableByMember(b.sourceMember) === v || this._findVariableByMember(b.targetMember) === v);
+    }).forEach(b => {
+      CircuitModule.unbind(b.sourceMember, b.targetMember);
+      helper.remove(this._bindings, b);
     });
-    helper.remove(this._variables, variable);
+    helper.remove(this._variables, v);
   }
 
   _bind(sourceMember, targetMember) {
@@ -90,12 +90,12 @@ export class Environment {
   }
 
   _unbind(sourceMember, targetMember) {
-    const binding = this._findBinding(sourceMember, targetMember);
-    if (!binding) {
+    const b = this._findBinding(sourceMember, targetMember);
+    if (!b) {
       throw new Error('PlayBuildScript runtime error: Not bound');
     }
     CircuitModule.unbind(sourceMember, targetMember);
-    helper.remove(this._bindings, binding);
+    helper.remove(this._bindings, b);
   }
 
   async _loadScript(text, fileName) {
@@ -109,12 +109,12 @@ export class Environment {
   }
 
   _generateScript() {
-    const variableScript = this._variables.map(variable => {
-      return variable.name + ':' + variable.moduleName;
+    const variableScript = this._variables.map(v => {
+      return v.name + ':' + v.moduleName;
     }).join('\n');
-    const bindingScript = this._bindings.map(binding => {
-      return (this._findVariableByMember(binding.sourceMember).name + '.' + binding.sourceMember.name + ' >> ' +
-              this._findVariableByMember(binding.targetMember).name + '.' + binding.targetMember.name);
+    const bindingScript = this._bindings.map(b => {
+      return (this._findVariableByMember(b.sourceMember).name + '.' + b.sourceMember.name + ' >> ' +
+              this._findVariableByMember(b.targetMember).name + '.' + b.targetMember.name);
     }).join('\n');
     return (variableScript + '\n' + bindingScript).trim() + '\n';
   }
@@ -127,14 +127,14 @@ export class Environment {
       return this._loadVariable(variableName, moduleName);
     },
     bind(sourceVariableName, sourceMemberName, targetVariableName, targetMemberName) {
-      const sourceMember = this._fetchMember(sourceVariableName, sourceMemberName);
-      const targetMember = this._fetchMember(targetVariableName, targetMemberName);
-      this._bind(sourceMember, targetMember);
+      const s = this._fetchMember(sourceVariableName, sourceMemberName);
+      const t = this._fetchMember(targetVariableName, targetMemberName);
+      this._bind(s, t);
     },
     unbind(sourceVariableName, sourceMemberName, targetVariableName, targetMemberName) {
-      const sourceMember = this._fetchMember(sourceVariableName, sourceMemberName);
-      const targetMember = this._fetchMember(targetVariableName, targetMemberName);
-      this._unbind(sourceMember, targetMember);
+      const s = this._fetchMember(sourceVariableName, sourceMemberName);
+      const t = this._fetchMember(targetVariableName, targetMemberName);
+      this._unbind(s, t);
     },
     send(variableName, memberName, dataText) {
       this._fetchMember(variableName, memberName)(dataText);
@@ -151,8 +151,8 @@ export class Environment {
       }));
     },
     async load(filePath) {
-      const result = await this._scriptLoader(filePath);
-      return this._loadScript(result.text, result.fileName);
+      const s = await this._scriptLoader(filePath);
+      return this._loadScript(s.text, s.fileName);
     },
     save(filePath) {
       return this._scriptSaver(filePath, this._generateScript());

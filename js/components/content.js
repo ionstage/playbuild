@@ -9,32 +9,32 @@ export class Content extends jCore.Component {
   }
 
   async loadVariable(name, moduleName) {
-    let variable = this._findVariable(name);
-    if (variable) {
-      return variable;
+    let v = this._findVariable(name);
+    if (v) {
+      return v;
     }
-    variable = new Variable({ name, moduleName });
-    variable.parentElement(this.el);
-    variable.redraw();
+    v = new Variable({ name, moduleName });
+    v.parentElement(this.el);
+    v.redraw();
     try {
-      await variable.load();
-      this._variables.push(variable);
-      return variable;
+      await v.load();
+      this._variables.push(v);
+      return v;
     } catch (e) {
-      variable.parentElement(null);
+      v.parentElement(null);
       throw e;
     }
   }
 
   deleteVariable(name) {
-    const variable = this._findVariable(name);
-    if (variable) {
-      variable.parentElement(null);
-      helper.remove(this._variables, variable);
+    const v = this._findVariable(name);
+    if (v) {
+      v.parentElement(null);
+      helper.remove(this._variables, v);
     }
   }
 
   _findVariable(name) {
-    return this._variables.find(variable => (variable.name() === name));
+    return this._variables.find(v => (v.name() === name));
   }
 }
