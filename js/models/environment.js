@@ -26,6 +26,10 @@ export class Environment {
     }
   }
 
+  async loadScript(filePath) {
+    return await Environment._EXEC_TABLE.load.call(this, filePath);
+  }
+
   _findVariable(name) {
     return this._variables.find(v => (v.name === name));
   }

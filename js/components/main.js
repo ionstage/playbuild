@@ -49,9 +49,16 @@ export class Main extends jCore.Component {
     FileSaver.saveAs(new Blob([text], { type: 'plain/text' }), path);
   }
 
-  _oninit() {
-    this._commandInput.focus();
+  async _loadInitScript() {
+    this._commandInput.disabled(true);
+    await this._env.loadScript('init.pb');
+    this._commandInput.disabled(false);
+  }
+
+  async _oninit() {
+    await this._loadInitScript();
     this._commandInput.on('exec', this._onexec.bind(this));
+    this._commandInput.focus();
   }
 
   async _onexec(text, done) {
