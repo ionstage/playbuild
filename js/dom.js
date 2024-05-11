@@ -19,24 +19,20 @@ export class dom {
   }
 
   static attr(el, props) {
-    Object.keys(props).forEach(key => {
+    for (const key in props) {
       el.setAttribute(key, props[key]);
-    });
+    }
   }
 
   static css(el, props) {
     const style = el.style;
-    Object.keys(props).forEach(key => {
+    for (const key in props) {
       style[key] = props[key];
-    });
+    }
   }
 
   static toggleClass(el, className, force) {
-    if (force) {
-      el.classList.add(className);
-    } else {
-      el.classList.remove(className);
-    }
+    el.classList.toggle(className, force);
   }
 
   static text(el, s) {
@@ -105,18 +101,14 @@ export class dom {
   static readFile(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-
       const onfailed = () => {
         reject(new Error('Failed to read file: ' + file.name));
       };
-
       reader.onload = event => {
         resolve(event.target.result);
       };
-
       reader.onerror = onfailed;
       reader.onabort = onfailed;
-
       reader.readAsText(file);
     });
   }
