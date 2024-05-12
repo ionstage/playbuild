@@ -1,54 +1,26 @@
-.main {
+body {
+  -webkit-text-size-adjust: 100%;
   color: #212121;
   font-family: Courier, monospace;
   font-size: 16px;
   margin: 0;
 }
 
-.header {
-  background-color: #f5f5f5;
-  border-bottom: 1px solid #e0e0e0;
-  box-sizing: border-box;
-  padding: 8px;
-  position: fixed;
-  width: 100%;
-}
-
-.command-input {
-  border: 1px solid #bdbdbd;
-  border-radius: 0;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, .075);
-  box-sizing: border-box;
-  color: inherit;
-  font: inherit;
-  height: 32px;
-  padding: 0 4px;
-  width: 100%;
-}
-
-.command-input.error {
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 0 #f44336;
-}
-
-.file-input {
-  display: none;
-}
-
 .content {
-  padding-top: 49px;
+  margin: 0 auto 96px auto;
+  max-width: 648px;
 }
 
 .variable {
   background-color: #f5f5f5;
   border: 1px solid #bdbdbd;
-  margin: 16px;
-  padding: 8px;
+  margin: 24px;
 }
 
 .variable-header {
-  line-height: 16px;
-  margin-bottom: 8px;
+  border-bottom: 1px solid #bdbdbd;
+  line-height: 30px;
+  padding: 0px 8px;
 }
 
 .variable-header::after {
@@ -70,9 +42,42 @@
 }
 
 .variable-content {
-  background-color: #ffffff;
+  background-color: #fff;
   border: 0;
   display: block;
   height: 0;
   width: 100%;
+}
+
+.controls {
+  background-color: #fff;
+  bottom: 0;
+  left: 0;
+  margin: 0 auto;
+  max-width: 600px;
+  padding: 0 24px 24px 24px;
+  position: fixed;
+  right: 0;
+}
+
+.command-input {
+  background-color: #212121;
+  border: 1px solid #bdbdbd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: #fafafa;
+  font: inherit;
+  height: 40px;
+  outline: 0;
+  padding: 8px;
+  width: 100%;
+}
+
+.command-input.error {
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 0 #f44336;
+}
+
+.file-input {
+  display: none;
 }
