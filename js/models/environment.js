@@ -27,7 +27,7 @@ export class Environment {
   }
 
   async loadScript(filePath) {
-    return await Environment._EXEC_TABLE.load.call(this, filePath);
+    return await Environment._EXEC_TABLE[':load'].call(this, filePath);
   }
 
   _findVariable(name) {
@@ -124,41 +124,41 @@ export class Environment {
   }
 
   static _EXEC_TABLE = {
-    new(variableName, moduleName) {
+    ':new'(variableName, moduleName) {
       if (this._findVariable(variableName)) {
         throw new Error('PlayBuildScript runtime error: variable "' + variableName + '" is already defined');
       }
       return this._loadVariable(variableName, moduleName);
     },
-    bind(sourceVariableName, sourceMemberName, targetVariableName, targetMemberName) {
+    ':bind'(sourceVariableName, sourceMemberName, targetVariableName, targetMemberName) {
       const s = this._fetchMember(sourceVariableName, sourceMemberName);
       const t = this._fetchMember(targetVariableName, targetMemberName);
       this._bind(s, t);
     },
-    unbind(sourceVariableName, sourceMemberName, targetVariableName, targetMemberName) {
+    ':unbind'(sourceVariableName, sourceMemberName, targetVariableName, targetMemberName) {
       const s = this._fetchMember(sourceVariableName, sourceMemberName);
       const t = this._fetchMember(targetVariableName, targetMemberName);
       this._unbind(s, t);
     },
-    send(variableName, memberName, dataText) {
+    ':send'(variableName, memberName, dataText) {
       this._fetchMember(variableName, memberName)(dataText);
     },
-    delete(variableName) {
+    ':delete'(variableName) {
       if (!this._findVariable(variableName)) {
         throw new Error('PlayBuildScript runtime error: variable "' + variableName + '" is not defined');
       }
       return this._unloadVariable(variableName);
     },
-    reset() {
+    ':reset'() {
       return Promise.all(this._variables.map(variable => {
         return this._unloadVariable(variable.name);
       }));
     },
-    async load(filePath) {
+    async ':load'(filePath) {
       const s = await this._scriptLoader(filePath);
       return this._loadScript(s.text, s.fileName);
     },
-    save(filePath) {
+    ':save'(filePath) {
       return this._scriptSaver(filePath, this._generateScript());
     },
   };

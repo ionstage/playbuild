@@ -43,35 +43,35 @@ function makeNodes(tokens) {
   const nodes = tokens.slice();
   if (nodes[0] === ':' && nodes.length >= 2) {
     nodes.shift();
-    nodes[0] = nodes[0].toLowerCase();
+    nodes[0] = ':' + nodes[0].toLowerCase();
   } else if (nodes[1] === ':') {
     nodes.splice(1, 1);
-    nodes.unshift('new');
+    nodes.unshift(':new');
   } else if (nodes[1] === '.' && nodes[3] === '>>' && nodes[5] === '.') {
     nodes.splice(3, 1);
-    nodes.unshift('bind');
+    nodes.unshift(':bind');
   } else if (nodes[1] === '.' && nodes[3] === '<<') {
     nodes.splice(3, 1);
-    nodes.unshift('send');
+    nodes.unshift(':send');
   }
   return nodes;
 }
 
 function isValidNodes(nodes) {
   switch (nodes[0]) {
-    case 'new':
+    case ':new':
       return (nodes.length === 3 && /^[a-zA-Z]/.test(nodes[1]) && /^[a-zA-Z]/.test(nodes[2]));
-    case 'bind':
-    case 'unbind':
+    case ':bind':
+    case ':unbind':
       return (nodes.length === 7 && nodes[2] === '.' && nodes[5] === '.');
-    case 'send':
+    case ':send':
       return (nodes.length >= 4 && nodes.length <= 5 && nodes[2] === '.');
-    case 'delete':
+    case ':delete':
       return (nodes.length === 2 && /^[a-zA-Z]/.test(nodes[1]));
-    case 'reset':
+    case ':reset':
       return (nodes.length === 1);
-    case 'load':
-    case 'save':
+    case ':load':
+    case ':save':
       return (nodes.length <= 2);
     default:
       return (nodes.length === 0);
