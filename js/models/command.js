@@ -7,6 +7,30 @@ export class Command {
     }
     return makeArgs(nodes);
   }
+
+  static parseList(s) {
+    let doubleQuoted = false;
+    let singleQuoted = false;
+    const indexes = [];
+    for (let i = 0; i < s.length; i++) {
+      if (s[i] === '"' && s[i-1] !== '\\' && !singleQuoted) {
+        doubleQuoted = !doubleQuoted;
+      } else if (s[i] === "'" && s[i-1] !== '\\' && !doubleQuoted) {
+        singleQuoted = !singleQuoted;
+      } else if (s[i] === ';' && !singleQuoted && !doubleQuoted) {
+        indexes.push(i);
+      }
+    }
+    if (doubleQuoted || singleQuoted) {
+      throw new SyntaxError('PlayBuildScript parse error: Invalid command line string "' +  s + '"');
+    }
+    if (s[s.length - 1] !== ';') {
+      indexes.push(s.length);
+    }
+    return indexes.map((index, i) => {
+      return s.substring((i !== 0 ? indexes[i-1] + 1 : 0), index);
+    });
+  }
 }
 
 function tokenize(s) {

@@ -14,7 +14,7 @@ export class Environment {
 
   async exec(list) {
     if (typeof list === 'string') {
-      list = [list];
+      list = Command.parseList(list);
     }
     for (const s of list) {
       const args = Command.parse(s);
