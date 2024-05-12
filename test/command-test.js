@@ -99,6 +99,7 @@ describe('Command', () => {
       ':delete _x',
       ':delete x.y',
       ':reset x',
+      ':reset+',
       ':load x y',
       ':save x y',
     ].forEach(p => {
