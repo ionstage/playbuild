@@ -32,12 +32,11 @@ body {
 }
 
 .variable-name {
+  color: #9e9e9e;
   float: left;
-  font-weight: bold;
 }
 
-.variable-module-name {
-  color: #9e9e9e;
+.variable-delete-button {
   float: right;
 }
 

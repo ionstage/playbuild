@@ -30,8 +30,8 @@ export class Variable extends jCore.Component {
     return dom.find(this.el, '.variable-name');
   }
 
-  _moduleNameElement() {
-    return dom.find(this.el, '.variable-module-name');
+  _deleteButtonElement() {
+    return dom.find(this.el, '.variable-delete-button');
   }
 
   _contentUrl() {
@@ -39,15 +39,14 @@ export class Variable extends jCore.Component {
   }
 
   _oninit() {
-    dom.text(this._nameElement(), this._name());
-    dom.text(this._moduleNameElement(), this._moduleName());
+    dom.text(this._nameElement(), this._name() + ':' + this._moduleName());
   }
 
   static _HTML_TEXT = [
     '<div class="variable">',
       '<div class="variable-header">',
         '<div class="variable-name"></div>',
-        '<div class="variable-module-name"></div>',
+        '<div class="variable-delete-button">×</div>',
       '</div>',
       '<iframe class="variable-content"></iframe>',
     '</div>',
