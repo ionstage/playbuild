@@ -20,7 +20,6 @@ body {
 .variable-header {
   border-bottom: 1px solid #bdbdbd;
   line-height: 30px;
-  padding: 0px 8px;
 }
 
 .variable-header::after {
@@ -34,10 +33,20 @@ body {
 .variable-name {
   color: #9e9e9e;
   float: left;
+  padding-left: 8px;
 }
 
 .variable-delete-button {
+  color: #616161;
+  cursor: default;
   float: right;
+  font-size: 21px;
+  padding: 0 8px;
+  touch-action: manipulation;
+}
+
+.variable-delete-button:active {
+  color: #9e9e9e;
 }
 
 .variable-content {
