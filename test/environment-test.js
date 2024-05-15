@@ -204,4 +204,19 @@ describe('Environment', () => {
       assert.strictEqual(f.mock.calls[0].arguments[1], 'x:Module\n');
     });
   });
+
+  describe('#loadScript', () => {
+    it('load script', async () => {
+      const f = mock.fn(async () => {
+        return {
+          text: ':new x Module',
+          fileName: 'test.pb',
+        };
+      });
+      const env = TestEnvironment({ scriptLoader: f });
+      await env.loadScript('/path/to/script');
+      assert.strictEqual(env._variables[0].name, 'x');
+      assert.strictEqual(f.mock.calls[0].arguments[0], '/path/to/script');
+    });
+  });
 });
