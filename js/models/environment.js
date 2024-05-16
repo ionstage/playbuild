@@ -26,6 +26,10 @@ export class Environment {
     }
   }
 
+  async deleteVariable(name) {
+    return await Environment._EXEC_TABLE[':delete'].call(this, name);
+  }
+
   async loadScript(filePath) {
     return await Environment._EXEC_TABLE[':load'].call(this, filePath);
   }

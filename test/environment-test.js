@@ -205,6 +205,19 @@ describe('Environment', () => {
     });
   });
 
+  describe('#deleteVariable', () => {
+    it('delete variable', async () => {
+      const f = mock.fn(async () => {});
+      const env = TestEnvironment({ circuitModuleUnloader: f });
+      await env.exec([
+        ':new x Module',
+      ]);
+      await env.deleteVariable('x');
+      assert.strictEqual(env._variables.length, 0);
+      assert.strictEqual(f.mock.callCount(), 1);
+    });
+  });
+
   describe('#loadScript', () => {
     it('load script', async () => {
       const f = mock.fn(async () => {
