@@ -59,6 +59,7 @@ export class Main extends jCore.Component {
     await this._loadInitScript();
     this._commandInput.on('exec', this._onexec.bind(this));
     this._commandInput.focus();
+    this._content.on('delete-variable', this._ondelete_variable.bind(this));
   }
 
   async _onexec(text, done) {
@@ -72,5 +73,9 @@ export class Main extends jCore.Component {
     }
     this._commandInput.disabled(false);
     this._commandInput.focus();
+  }
+
+  _ondelete_variable(name) {
+    this._env.deleteVariable(name);
   }
 }

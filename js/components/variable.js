@@ -7,6 +7,7 @@ export class Variable extends jCore.Component {
     this._name = this.prop(props.name);
     this._moduleName = this.prop(props.moduleName);
     this._content = new VariableContent(dom.find(this.el, '.variable-content'));
+    this._onclick_deleteButton = this._onclick_deleteButton.bind(this);
     this._oninit();
   }
 
@@ -26,6 +27,10 @@ export class Variable extends jCore.Component {
     return this._content.load(this._contentUrl());
   }
 
+  unload() {
+    dom.off(this._deleteButtonElement(), 'click', this._onclick_deleteButton);
+  }
+
   _nameElement() {
     return dom.find(this.el, '.variable-name');
   }
@@ -40,6 +45,11 @@ export class Variable extends jCore.Component {
 
   _oninit() {
     dom.text(this._nameElement(), this._name() + ':' + this._moduleName());
+    dom.on(this._deleteButtonElement(), 'click', this._onclick_deleteButton);
+  }
+
+  _onclick_deleteButton() {
+    this.emit('delete');
   }
 
   static _HTML_TEXT = [

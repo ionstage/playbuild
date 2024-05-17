@@ -18,6 +18,7 @@ export class Content extends jCore.Component {
     v.redraw();
     try {
       await v.load();
+      v.on('delete', this.emit.bind(this, 'delete-variable', v.name()));
       this._variables.push(v);
       return v;
     } catch (e) {
@@ -29,6 +30,8 @@ export class Content extends jCore.Component {
   deleteVariable(name) {
     const v = this._findVariable(name);
     if (v) {
+      v.unload();
+      v.removeAllListeners();
       v.parentElement(null);
       helper.remove(this._variables, v);
     }
