@@ -17,6 +17,8 @@
     "jcore": "^0.4.7"
   },
   "devDependencies": {
-    "esbuild": "^0.21.1"
+    "esbuild": "^0.21.1",
+    "eslint": "^9.3.0",
+    "globals": "^15.2.0"
   }
 }
