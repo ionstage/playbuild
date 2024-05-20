@@ -34,7 +34,7 @@ export class Command {
 }
 
 function tokenize(s) {
-  const tokens = s.match(/".*?[^\\]"|'.*?[^\\]'|\.|#|:|>>|<<|[\w"'\/\\]+|\S+/g) || [];
+  const tokens = s.match(/".*?[^\\]"|'.*?[^\\]'|\.|#|:|>>|<<|[\w"'/\\]+|\S+/g) || [];
   const index = tokens.indexOf('#');
   return (index !== -1 ? tokens.slice(0, index) : tokens);
 }
