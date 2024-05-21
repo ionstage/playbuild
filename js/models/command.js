@@ -60,7 +60,7 @@ function makeNodes(tokens) {
 function isValidNodes(nodes) {
   switch (nodes[0]) {
     case ':new':
-      return (nodes.length === 3 && /^[a-zA-Z]/.test(nodes[1]) && /^[a-zA-Z]/.test(nodes[2]));
+      return (nodes.length >= 3 && nodes.length <= 4 && /^[a-zA-Z]/.test(nodes[1]) && /^[a-zA-Z]/.test(nodes[2]));
     case ':bind':
     case ':unbind':
       return (nodes.length === 7 && nodes[2] === '.' && nodes[5] === '.');

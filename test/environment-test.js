@@ -32,6 +32,20 @@ describe('Environment', () => {
       assert.strictEqual(f.mock.calls[0].arguments[1], 'Module');
     });
 
+    it('create new variable with data', async () => {
+      const m = new CircuitModule.PlayBuildModule([]);
+      const f = mock.fn(async () => m);
+      const env = TestEnvironment({ circuitModuleLoader: f });
+      await env.exec(':new x Module data_text');
+      const x = env._variables[0];
+      assert.strictEqual(x.name, 'x');
+      assert.strictEqual(x.moduleName, 'Module');
+      assert.strictEqual(x.circuitModule, m);
+      assert.strictEqual(f.mock.calls[0].arguments[0], 'x');
+      assert.strictEqual(f.mock.calls[0].arguments[1], 'Module');
+      assert.strictEqual(f.mock.calls[0].arguments[2], 'data_text');
+    });
+
     it('should not create variables with the same name', async () => {
       const env = TestEnvironment();
       try {

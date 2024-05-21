@@ -3,12 +3,19 @@ import { helper } from '../helper.js';
 const Wrapper = helper.wrapper();
 
 export class CircuitModule {
-  constructor(memberTable) {
+  constructor(memberTable, options) {
     this._memberTable = memberTable;
+    this._options = options;
   }
 
   get(name) {
     return this._memberTable[name] || null;
+  }
+
+  deserialize(s) {
+    if (s != null && typeof this._options.deserialize === 'function') {
+      this._options.deserialize(s);
+    }
   }
 
   static bind(sourceMember, targetMember) {
@@ -24,11 +31,11 @@ export class CircuitModule {
   }
 
   static PlayBuildModule = class {
-    constructor(members) {
+    constructor(members, options) {
       return new CircuitModule(members.reduce((ret, member) => {
         ret[member.name] = new CircuitModuleMember(member);
         return ret;
-      }, {}));
+      }, {}), options || {});
     }
   };
 }

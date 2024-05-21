@@ -23,8 +23,8 @@ export class Variable extends jCore.Component {
     return this._content.circuitModule();
   }
 
-  load() {
-    return this._content.load(this._contentUrl());
+  load(dataText) {
+    return this._content.load(this._contentUrl(), dataText);
   }
 
   unload() {
@@ -73,12 +73,14 @@ class VariableContent extends jCore.Component {
     return (playbuild && playbuild.exports);
   }
 
-  async load(url) {
+  async load(url, dataText) {
     const circuitModule = await new Promise((resolve, reject) => {
       const timeoutID = setTimeout(reject, 30 * 1000, new Error('PlayBuildScript runtime error: Load timeout for content'));
       dom.once(this.el, 'load', () => {
         clearTimeout(timeoutID);
-        resolve(this.circuitModule());
+        const circuitModule = this.circuitModule();
+        circuitModule.deserialize(dataText);
+        resolve(circuitModule);
       });
       dom.attr(this.el, { src: url });
     });

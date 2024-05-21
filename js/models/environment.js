@@ -62,8 +62,8 @@ export class Environment {
     return m;
   }
 
-  async _loadVariable(name, moduleName) {
-    const circuitModule = await this._circuitModuleLoader(name, moduleName);
+  async _loadVariable(name, moduleName, dataText) {
+    const circuitModule = await this._circuitModuleLoader(name, moduleName, dataText);
     if (!circuitModule) {
       throw new Error('PlayBuildScript runtime error: Invalid circuit module');
     }
@@ -128,11 +128,11 @@ export class Environment {
   }
 
   static _EXEC_TABLE = {
-    ':new'(variableName, moduleName) {
+    ':new'(variableName, moduleName, dataText) {
       if (this._findVariable(variableName)) {
         throw new Error('PlayBuildScript runtime error: variable "' + variableName + '" is already defined');
       }
-      return this._loadVariable(variableName, moduleName);
+      return this._loadVariable(variableName, moduleName, dataText);
     },
     ':bind'(sourceVariableName, sourceMemberName, targetVariableName, targetMemberName) {
       const s = this._fetchMember(sourceVariableName, sourceMemberName);

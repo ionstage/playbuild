@@ -8,7 +8,7 @@ export class Content extends jCore.Component {
     this._variables = [];
   }
 
-  async loadVariable(name, moduleName) {
+  async loadVariable(name, moduleName, dataText) {
     let v = this._findVariable(name);
     if (v) {
       return v;
@@ -17,7 +17,7 @@ export class Content extends jCore.Component {
     v.parentElement(this.el);
     v.redraw();
     try {
-      await v.load();
+      await v.load(dataText);
       v.on('delete', this.emit.bind(this, 'delete-variable', v.name()));
       this._variables.push(v);
       return v;
