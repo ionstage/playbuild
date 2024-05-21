@@ -70,4 +70,17 @@ describe('CircuitModule.PlayBuildModule', () => {
     a(1);
     assert.strictEqual(b(), 0);
   });
+
+  it('has not options', () => {
+    const m = new CircuitModule.PlayBuildModule([]);
+    assert.doesNotThrow(() => m.deserialize('data_text'));
+  });
+
+  it('options.deserialize', () => {
+    const f = mock.fn();
+    const m = new CircuitModule.PlayBuildModule([], { deserialize: f });
+    const s = 'data_text';
+    m.deserialize(s);
+    assert.strictEqual(f.mock.calls[0].arguments[0], s);
+  });
 });
