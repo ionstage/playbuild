@@ -16,7 +16,7 @@ export class helper {
         return (key === Wrapper.KEY ? this : null);
       }
 
-      static KEY = {};
+      static KEY = Symbol();
     }
   };
 }
