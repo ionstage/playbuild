@@ -143,7 +143,7 @@ describe('Environment', () => {
 
     it('unbind all circuit module members on deleting variable', async () => {
       const env = TestEnvironment({
-        circuitModuleLoader: async (variableName, moduleName) => {
+        circuitModuleLoader: async () => {
           return new CircuitModule.PlayBuildModule([
             { name: 'a', type: 'data' },
             { name: 'b', type: 'data' },
