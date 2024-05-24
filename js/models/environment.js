@@ -121,7 +121,7 @@ export class Environment {
       let c = v.name + ':' + v.moduleName;
       const s = v.circuitModule.serialize();
       if (s != null) {
-        c += ` "${s.replace(/"/g, '\\"')}"`;
+        c += ` '${s.replace(/'/g, '\\\'')}'`;
       }
       return c;
     }).join('\n');
