@@ -12,6 +12,13 @@ export class CircuitModule {
     return this._memberTable[name] || null;
   }
 
+  serialize() {
+    if (typeof this._options.serialize === 'function') {
+      return this._options.serialize();
+    }
+    return null;
+  }
+
   deserialize(s) {
     if (s != null && typeof this._options.deserialize === 'function') {
       this._options.deserialize(s);

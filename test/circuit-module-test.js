@@ -73,7 +73,15 @@ describe('CircuitModule.PlayBuildModule', () => {
 
   it('has not options', () => {
     const m = new CircuitModule.PlayBuildModule([]);
+    assert.strictEqual(m.serialize(), null);
     assert.doesNotThrow(() => m.deserialize('data_text'));
+  });
+
+  it('options.serialize', () => {
+    const s = 'data_text';
+    const f = mock.fn(() => s);
+    const m = new CircuitModule.PlayBuildModule([], { serialize: f });
+    assert.strictEqual(m.serialize(), s);
   });
 
   it('options.deserialize', () => {

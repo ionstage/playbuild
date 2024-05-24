@@ -217,6 +217,19 @@ describe('Environment', () => {
       assert.strictEqual(f.mock.calls[0].arguments[0], '/path/to/script');
       assert.strictEqual(f.mock.calls[0].arguments[1], 'x:Module\n');
     });
+
+    it('save command with variables data', async () => {
+      const s = 'data"_"text';
+      const m = new CircuitModule.PlayBuildModule([], { serialize: () => 'data"_"text' });
+      const f = mock.fn(async () => {});
+      const env = TestEnvironment({ circuitModuleLoader: async () => m, scriptSaver: f });
+      await env.exec([
+        ':new x Module ' + s,
+        ':save /path/to/script',
+      ]);
+      assert.strictEqual(f.mock.calls[0].arguments[0], '/path/to/script');
+      assert.strictEqual(f.mock.calls[0].arguments[1], 'x:Module "data\\"_\\"text"\n');
+    });
   });
 
   describe('#deleteVariable', () => {

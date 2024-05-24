@@ -39,6 +39,9 @@
       { name: 'text', type: 'data', arg: dataArgs.text },
       { name: 'change', type: 'event' },
     ], {
+      serialize: function() {
+        return text;
+      },
       deserialize: function(s) {
         text = s;
         textInputElement.value = text;

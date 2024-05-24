@@ -118,7 +118,12 @@ export class Environment {
 
   _generateScript() {
     const variableScript = this._variables.map(v => {
-      return v.name + ':' + v.moduleName;
+      let c = v.name + ':' + v.moduleName;
+      const s = v.circuitModule.serialize();
+      if (s != null) {
+        c += ` "${s.replace(/"/g, '\\"')}"`;
+      }
+      return c;
     }).join('\n');
     const bindingScript = this._bindings.map(b => {
       return (this._findVariableByMember(b.sourceMember).name + '.' + b.sourceMember.name + ' >> ' +
