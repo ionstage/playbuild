@@ -4,15 +4,15 @@ import { dom } from '../dom.js';
 export class Variable extends jCore.Component {
   constructor(props) {
     super();
-    this._name = this.prop(props.name);
-    this._moduleName = this.prop(props.moduleName);
+    this._name = props.name;
+    this._moduleName = props.moduleName;
     this._content = new VariableContent(dom.find(this.el, '.variable-content'));
     this._onclick_deleteButton = this._onclick_deleteButton.bind(this);
     this._oninit();
   }
 
   name() {
-    return this._name();
+    return this._name;
   }
 
   render() {
@@ -40,11 +40,11 @@ export class Variable extends jCore.Component {
   }
 
   _contentUrl() {
-    return 'playbuild_modules/' + encodeURI(this._moduleName()) + '.html';
+    return 'playbuild_modules/' + encodeURI(this._moduleName) + '.html';
   }
 
   _oninit() {
-    dom.text(this._nameElement(), this._name() + ':' + this._moduleName());
+    dom.text(this._nameElement(), this._name + ':' + this._moduleName);
     dom.on(this._deleteButtonElement(), 'click', this._onclick_deleteButton);
   }
 
