@@ -55,6 +55,11 @@ export class Variable extends jCore.Component {
   static _HTML_TEXT = [
     '<div class="variable">',
       '<div class="variable-header">',
+        '<div class="variable-toggle-button">',
+          '<svg class="variable-toggle-button-image" viewBox="0 0 7 12">',
+            '<path d="M 1 1 L 6 6 1 11" stroke="#616161" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none" />',
+          '</svg>',
+        '</div>',
         '<div class="variable-name"></div>',
         '<div class="variable-delete-button">×</div>',
       '</div>',
