@@ -48,16 +48,19 @@ body {
 }
 
 .variable-delete-button {
-  color: #616161;
-  cursor: default;
   float: right;
-  font-size: 21px;
-  padding: 0 8px;
+  line-height: 0;
+  padding: 10px;
   touch-action: manipulation;
 }
 
-.variable-delete-button:active {
-  color: #9e9e9e;
+.variable-delete-button:active path {
+  stroke: #9e9e9e;
+}
+
+.variable-delete-button-image {
+  height: 10px;
+  vertical-align: bottom;
 }
 
 .variable-content {
