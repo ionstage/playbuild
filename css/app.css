@@ -33,13 +33,28 @@ body {
 .variable-toggle-button {
   float: left;
   line-height: 0;
-  padding: 9px;
+  position: relative;
+}
+
+.variable-toggle-button-input {
+  appearance: none;
+  height: 30px;
+  margin: 0;
   touch-action: manipulation;
+  width: 25px;
 }
 
 .variable-toggle-button-image {
   height: 12px;
-  vertical-align: bottom;
+  left: 0;
+  padding: 9px;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+}
+
+.variable-toggle-button-input:checked + .variable-toggle-button-image {
+  transform: rotate(90deg);
 }
 
 .variable-name {
