@@ -50,6 +50,10 @@ export class dom {
     el.disabled = disabled;
   }
 
+  static checked(el) {
+    return el.checked;
+  }
+
   static focus(el) {
     el.focus();
   }

@@ -18,8 +18,11 @@ body {
 }
 
 .variable-header {
-  border-bottom: 1px solid #bdbdbd;
   line-height: 30px;
+}
+
+.variable.open > .variable-header {
+  border-bottom: 1px solid #bdbdbd;
 }
 
 .variable-header::after {
@@ -81,9 +84,13 @@ body {
 .variable-content {
   background-color: #fff;
   border: 0;
-  display: block;
+  display: none;
   height: 0;
   width: 100%;
+}
+
+.variable.open > .variable-content {
+  display: block;
 }
 
 .controls {

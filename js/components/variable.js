@@ -7,6 +7,7 @@ export class Variable extends jCore.Component {
     this._name = props.name;
     this._moduleName = props.moduleName;
     this._content = new VariableContent(dom.find(this.el, '.variable-content'));
+    this._onchange_toggleButton = this._onchange_toggleButton.bind(this);
     this._onclick_deleteButton = this._onclick_deleteButton.bind(this);
     this._oninit();
   }
@@ -31,6 +32,10 @@ export class Variable extends jCore.Component {
     dom.off(this._deleteButtonElement(), 'click', this._onclick_deleteButton);
   }
 
+  _toggleButtonElement() {
+    return dom.find(this.el, '.variable-toggle-button');
+  }
+
   _nameElement() {
     return dom.find(this.el, '.variable-name');
   }
@@ -45,7 +50,13 @@ export class Variable extends jCore.Component {
 
   _oninit() {
     dom.text(this._nameElement(), this._name + ':' + this._moduleName);
+    dom.on(this._toggleButtonElement(), 'change', this._onchange_toggleButton);
     dom.on(this._deleteButtonElement(), 'click', this._onclick_deleteButton);
+  }
+
+  _onchange_toggleButton(event) {
+    const checked = dom.checked(dom.target(event));
+    dom.toggleClass(this.el, 'open', checked);
   }
 
   _onclick_deleteButton() {
@@ -53,7 +64,7 @@ export class Variable extends jCore.Component {
   }
 
   static _HTML_TEXT = [
-    '<div class="variable">',
+    '<div class="variable open">',
       '<div class="variable-header">',
         '<div class="variable-toggle-button">',
           '<input class="variable-toggle-button-input" type="checkbox" name="variable-toggle" checked ontouchstart="">',
