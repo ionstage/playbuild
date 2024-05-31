@@ -66,6 +66,9 @@ body {
 }
 
 .variable-delete-button {
+  appearance: none;
+  background-color: transparent;
+  border: 0;
   float: right;
   line-height: 0;
   padding: 10px;
