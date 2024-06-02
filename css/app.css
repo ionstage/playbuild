@@ -50,13 +50,13 @@ body {
   height: 30px;
   margin: 0;
   touch-action: manipulation;
-  width: 25px;
+  width: 30px;
 }
 
 .variable-toggle-button-image {
   height: 12px;
   left: 0;
-  padding: 9px;
+  padding: 9px 11.5px;
   pointer-events: none;
   position: absolute;
   top: 0;
