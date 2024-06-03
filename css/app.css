@@ -68,7 +68,10 @@ body {
 
 .variable-name {
   color: #9e9e9e;
+  cursor: default;
   float: left;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .variable-delete-button {
