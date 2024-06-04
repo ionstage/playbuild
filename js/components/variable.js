@@ -87,6 +87,7 @@ export class Variable extends jCore.Component {
 class VariableContent extends jCore.Component {
   constructor(el) {
     super(el);
+    this._height = 0;
   }
 
   circuitModule() {
@@ -108,7 +109,8 @@ class VariableContent extends jCore.Component {
     if (!circuitModule) {
       throw new Error('PlayBuildScript runtime error: Invalid circuit module');
     }
-    dom.css(this.el, { height: dom.contentHeight(this.el) + 'px' });
+    this._height = dom.contentHeight(this.el);
+    dom.css(this.el, { height: this._height + 'px' });
   }
 
   _contentWindow() {
