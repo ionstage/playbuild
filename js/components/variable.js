@@ -7,6 +7,7 @@ export class Variable extends jCore.Component {
     this._name = props.name;
     this._moduleName = props.moduleName;
     this._content = new VariableContent(dom.find(this.el, '.variable-content'));
+    this._opened = true;
     this._onchange_toggleButton = this._onchange_toggleButton.bind(this);
     this._onclick_deleteButton = this._onclick_deleteButton.bind(this);
     this._oninit();
@@ -55,8 +56,8 @@ export class Variable extends jCore.Component {
   }
 
   _onchange_toggleButton(event) {
-    const checked = dom.checked(dom.target(event));
-    dom.toggleClass(this.el, 'open', checked);
+    this._opened = dom.checked(dom.target(event));
+    dom.toggleClass(this.el, 'open', this._opened);
   }
 
   _onclick_deleteButton() {
