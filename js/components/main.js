@@ -21,6 +21,12 @@ export class Main extends jCore.Component {
     this._oninit();
   }
 
+  async loadInitScript() {
+    this._commandInput.disabled(true);
+    await this._env.loadScript('init.pb');
+    this._commandInput.disabled(false);
+  }
+
   async _circuitModuleLoader(variableName, moduleName, dataText) {
     const v = await this._content.loadVariable(variableName, moduleName, dataText);
     return v.circuitModule();
@@ -49,14 +55,7 @@ export class Main extends jCore.Component {
     FileSaver.saveAs(new Blob([text], { type: 'plain/text' }), path);
   }
 
-  async _loadInitScript() {
-    this._commandInput.disabled(true);
-    await this._env.loadScript('init.pb');
-    this._commandInput.disabled(false);
-  }
-
-  async _oninit() {
-    await this._loadInitScript();
+  _oninit() {
     this._commandInput.on('exec', this._onexec.bind(this));
     this._commandInput.focus();
     this._content.on('delete-variable', this._ondelete_variable.bind(this));
