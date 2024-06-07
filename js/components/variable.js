@@ -91,6 +91,10 @@ class VariableContent extends jCore.Component {
     this._height = 0;
   }
 
+  height() {
+    return this._height;
+  }
+
   circuitModule() {
     const playbuild = this._contentWindow().playbuild;
     return (playbuild && playbuild.exports);
