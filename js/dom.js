@@ -83,9 +83,9 @@ export class dom {
   }
 
   static once(el, type, listener, useCapture) {
-    const wrapper = () => {
+    const wrapper = (...args) => {
       dom.off(el, type, wrapper, useCapture);
-      listener.apply(null, arguments);
+      listener.apply(null, args);
     };
     dom.on(el, type, wrapper, useCapture);
   }

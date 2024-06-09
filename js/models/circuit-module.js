@@ -53,8 +53,8 @@ class CircuitModuleMember {
     return this._wrapper(props.name);
   }
 
-  _call() {
-    return this.callee.apply(this, arguments);
+  _call(...args) {
+    return this.callee.apply(this, args);
   }
 
   _wrapper(name) {
