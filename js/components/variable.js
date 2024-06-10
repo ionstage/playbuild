@@ -17,12 +17,12 @@ export class Variable extends jCore.Component {
     return this._name;
   }
 
-  render() {
-    return dom.render(Variable._HTML_TEXT);
-  }
-
   circuitModule() {
     return this._content.circuitModule();
+  }
+
+  render() {
+    return dom.render(Variable._HTML_TEXT);
   }
 
   load(dataText) {
