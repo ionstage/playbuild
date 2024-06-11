@@ -17,6 +17,10 @@ export class Variable extends jCore.Component {
     return this._name;
   }
 
+  height() {
+    return (this._opened ? this._content.height() + Variable._HEIGHT_OFFSET_OPENED : Variable._HEIGHT_OFFSET_CLOSED);
+  }
+
   circuitModule() {
     return this._content.circuitModule();
   }
@@ -63,6 +67,9 @@ export class Variable extends jCore.Component {
   _onclick_deleteButton() {
     this.emit('delete');
   }
+
+  static _HEIGHT_OFFSET_OPENED = 33;
+  static _HEIGHT_OFFSET_CLOSED = 32;
 
   static _HTML_TEXT = [
     '<div class="variable open">',
