@@ -30,7 +30,7 @@
 
     const dataArgs = {
       count(value) {
-        value = parseInt((!isNaN(value) ? Number(value) : count), 10);
+        value = parseInt((isFinite(value) ? Number(value) : count), 10);
         if (value !== count) {
           count = value;
           contentElement.textContent = count;
