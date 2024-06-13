@@ -6,6 +6,8 @@ export class Content extends jCore.Component {
   constructor(el) {
     super(el);
     this._variables = [];
+    this._draggable = new ContentDraggable(this);
+    this._oninit();
   }
 
   async loadVariable(name, moduleName, dataText) {
@@ -40,4 +42,16 @@ export class Content extends jCore.Component {
   _findVariable(name) {
     return this._variables.find(v => (v.name() === name));
   }
+
+  _oninit() {
+    this._draggable.enable();
+  }
+}
+
+class ContentDraggable extends jCore.Draggable {
+  onstart() { /* TODO */ }
+
+  onmove() { /* TODO */ }
+
+  onend() { /* TODO */ }
 }
