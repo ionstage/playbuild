@@ -49,9 +49,13 @@ export class Content extends jCore.Component {
 }
 
 class ContentDraggable extends jCore.Draggable {
-  onstart() { /* TODO */ }
+  onstart(module) {
+    module.emit('dragstart');
+  }
 
   onmove() { /* TODO */ }
 
-  onend() { /* TODO */ }
+  onend(module) {
+    module.emit('dragend');
+  }
 }

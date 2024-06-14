@@ -59,6 +59,8 @@ export class Main extends jCore.Component {
     this._commandInput.on('exec', this._onexec.bind(this));
     this._commandInput.focus();
     this._content.on('delete-variable', this._ondelete_variable.bind(this));
+    this._content.on('dragstart', this._ondragstart.bind(this));
+    this._content.on('dragend', this._ondragend.bind(this));
   }
 
   async _onexec(text, done) {
@@ -76,5 +78,13 @@ export class Main extends jCore.Component {
 
   _ondelete_variable(name) {
     this._env.deleteVariable(name);
+  }
+
+  _ondragstart() {
+    // TODO
+  }
+
+  _ondragend() {
+    // TODO
   }
 }
