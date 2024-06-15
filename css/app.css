@@ -8,15 +8,15 @@ body {
   margin: 0;
 }
 
-body.dragging .embed {
-  pointer-events: none;
-}
-
 .content {
   margin: 0 24px 96px 24px;
   max-width: 600px;
   position: relative;
   width: 100%;
+}
+
+.content.dragging .embed {
+  pointer-events: none;
 }
 
 .variable {

@@ -6,9 +6,18 @@ import { Variable } from './variable.js';
 export class Content extends jCore.Component {
   constructor(el) {
     super(el);
+    this._dragCount = this.prop(0);
     this._variables = [];
     this._draggable = new ContentDraggable(this);
     this._oninit();
+  }
+
+  incrementDragCount() {
+    this._dragCount(this._dragCount() + 1);
+  }
+
+  decrementDragCount() {
+    this._dragCount(this._dragCount() - 1);
   }
 
   async loadVariable(name, moduleName, dataText) {
@@ -40,6 +49,12 @@ export class Content extends jCore.Component {
     }
   }
 
+  onredraw() {
+    this.redrawBy('_dragCount', dragCount => {
+      dom.toggleClass(this.el, 'dragging', (dragCount > 0));
+    });
+  }
+
   _findVariable(name) {
     return this._variables.find(v => (v.name() === name));
   }
@@ -52,12 +67,12 @@ export class Content extends jCore.Component {
 class ContentDraggable extends jCore.Draggable {
   onstart(module, x, y, event) {
     dom.cancel(event);
-    module.emit('dragstart');
+    module.incrementDragCount();
   }
 
   onmove() { /* TODO */ }
 
   onend(module) {
-    module.emit('dragend');
+    module.decrementDragCount();
   }
 }

@@ -9,7 +9,6 @@ import { FileInput } from './file-input.js';
 export class Main extends jCore.Component {
   constructor(el) {
     super(el);
-    this._dragCount = this.prop(0);
     this._env = new Environment({
       circuitModuleLoader: this._circuitModuleLoader.bind(this),
       circuitModuleUnloader: this._circuitModuleUnloader.bind(this),
@@ -26,12 +25,6 @@ export class Main extends jCore.Component {
     this._commandInput.disabled(true);
     await this._env.loadScript('init.pb');
     this._commandInput.disabled(false);
-  }
-
-  onredraw() {
-    this.redrawBy('_dragCount', dragCount => {
-      dom.toggleClass(this.el, 'dragging', (dragCount > 0));
-    });
   }
 
   async _circuitModuleLoader(variableName, moduleName, dataText) {
@@ -66,8 +59,6 @@ export class Main extends jCore.Component {
     this._commandInput.on('exec', this._onexec.bind(this));
     this._commandInput.focus();
     this._content.on('delete-variable', this._ondelete_variable.bind(this));
-    this._content.on('dragstart', this._ondragstart.bind(this));
-    this._content.on('dragend', this._ondragend.bind(this));
   }
 
   async _onexec(text, done) {
@@ -85,13 +76,5 @@ export class Main extends jCore.Component {
 
   _ondelete_variable(name) {
     this._env.deleteVariable(name);
-  }
-
-  _ondragstart() {
-    this._dragCount(this._dragCount() + 1);
-  }
-
-  _ondragend() {
-    this._dragCount(this._dragCount() - 1);
   }
 }
