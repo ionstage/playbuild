@@ -9,6 +9,7 @@ import { FileInput } from './file-input.js';
 export class Main extends jCore.Component {
   constructor(el) {
     super(el);
+    this._dragCount = this.prop(0);
     this._env = new Environment({
       circuitModuleLoader: this._circuitModuleLoader.bind(this),
       circuitModuleUnloader: this._circuitModuleUnloader.bind(this),
@@ -25,6 +26,12 @@ export class Main extends jCore.Component {
     this._commandInput.disabled(true);
     await this._env.loadScript('init.pb');
     this._commandInput.disabled(false);
+  }
+
+  onredraw() {
+    this.redrawBy('_dragCount', dragCount => {
+      dom.toggleClass(this.el, 'dragging', (dragCount > 0));
+    });
   }
 
   async _circuitModuleLoader(variableName, moduleName, dataText) {
@@ -81,10 +88,10 @@ export class Main extends jCore.Component {
   }
 
   _ondragstart() {
-    // TODO
+    this._dragCount(this._dragCount() + 1);
   }
 
   _ondragend() {
-    // TODO
+    this._dragCount(this._dragCount() - 1);
   }
 }

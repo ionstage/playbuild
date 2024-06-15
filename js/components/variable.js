@@ -87,7 +87,7 @@ export class Variable extends jCore.Component {
           '</svg>',
         '</button>',
       '</div>',
-      '<iframe class="variable-content"></iframe>',
+      '<iframe class="variable-content embed"></iframe>',
     '</div>',
   ].join('');
 }
