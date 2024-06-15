@@ -1,5 +1,6 @@
 import { jCore } from '../bundle/jcore.js';
 import { helper } from '../helper.js';
+import { dom } from '../dom.js';
 import { Variable } from './variable.js';
 
 export class Content extends jCore.Component {
@@ -49,7 +50,8 @@ export class Content extends jCore.Component {
 }
 
 class ContentDraggable extends jCore.Draggable {
-  onstart(module) {
+  onstart(module, x, y, event) {
+    dom.cancel(event);
     module.emit('dragstart');
   }
 
