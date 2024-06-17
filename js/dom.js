@@ -35,6 +35,10 @@ export class dom {
     el.classList.toggle(className, force);
   }
 
+  static hasClass(el, className) {
+    return el.classList.contains(className);
+  }
+
   static text(el, s) {
     el.textContent = s;
   }
