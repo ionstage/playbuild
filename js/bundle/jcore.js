@@ -160,6 +160,9 @@ var require_jcore = __commonJS({
           this.el.removeEventListener(startType, this["on" + startType], { passive: false });
           document.removeEventListener(moveType, this["on" + moveType]);
           document.removeEventListener(endType, this["on" + endType]);
+          if (!supportsTouch) {
+            document.removeEventListener("contextmenu", this.onmouseup);
+          }
           this.removeAllPointers();
         };
         Draggable2.prototype.onmousedown = function(event) {
@@ -171,6 +174,7 @@ var require_jcore = __commonJS({
           this.onstart.call(null, x, y, event, p.context);
           document.addEventListener("mousemove", this.onmousemove);
           document.addEventListener("mouseup", this.onmouseup);
+          document.addEventListener("contextmenu", this.onmouseup);
         };
         Draggable2.prototype.onmousemove = function(event) {
           var p = this.findPointer(Draggable2.IDENTIFIER_MOUSE);
@@ -184,6 +188,7 @@ var require_jcore = __commonJS({
           var dy = event.pageY - p.startPageY + p.dScrollY;
           document.removeEventListener("mousemove", this.onmousemove);
           document.removeEventListener("mouseup", this.onmouseup);
+          document.removeEventListener("contextmenu", this.onmouseup);
           this.onend.call(null, dx, dy, event, p.context);
           this.removePointer(p);
         };
