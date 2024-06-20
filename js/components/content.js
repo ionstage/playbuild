@@ -65,14 +65,14 @@ export class Content extends jCore.Component {
 }
 
 class ContentDraggable extends jCore.Draggable {
-  onstart(module, x, y, event) {
+  onstart(content, x, y, event) {
     dom.cancel(event);
-    module.incrementDragCount();
+    content.incrementDragCount();
   }
 
   onmove() { /* TODO */ }
 
-  onend(module) {
-    module.decrementDragCount();
+  onend(content) {
+    content.decrementDragCount();
   }
 }
