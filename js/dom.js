@@ -39,6 +39,10 @@ export class dom {
     return el.classList.contains(className);
   }
 
+  static data(el, key, value) {
+    el.dataset[key] = value;
+  }
+
   static text(el, s) {
     el.textContent = s;
   }

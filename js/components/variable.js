@@ -54,6 +54,7 @@ export class Variable extends jCore.Component {
   }
 
   _oninit() {
+    dom.data(this.el, 'name', this._name);
     dom.text(this._nameElement(), this._name + ':' + this._moduleName);
     dom.on(this._toggleButtonElement(), 'change', this._onchange_toggleButton);
     dom.on(this._deleteButtonElement(), 'click', this._onclick_deleteButton);
