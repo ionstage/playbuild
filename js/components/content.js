@@ -20,8 +20,12 @@ export class Content extends jCore.Component {
     this._dragCount(this._dragCount() - 1);
   }
 
+  findVariable(name) {
+    return this._variables.find(v => (v.name() === name));
+  }
+
   async loadVariable(name, moduleName, dataText) {
-    let v = this._findVariable(name);
+    let v = this.findVariable(name);
     if (v) {
       return v;
     }
@@ -40,7 +44,7 @@ export class Content extends jCore.Component {
   }
 
   deleteVariable(name) {
-    const v = this._findVariable(name);
+    const v = this.findVariable(name);
     if (v) {
       v.unload();
       v.removeAllListeners();
@@ -55,24 +59,37 @@ export class Content extends jCore.Component {
     });
   }
 
-  _findVariable(name) {
-    return this._variables.find(v => (v.name() === name));
-  }
-
   _oninit() {
     this._draggable.enable();
   }
 }
 
 class ContentDraggable extends jCore.Draggable {
-  onstart(content, x, y, event) {
-    dom.cancel(event);
-    content.incrementDragCount();
+  constructor(content) {
+    super(content);
+  }
+
+  onstart(content, x, y, event, context) {
+    context.variable = ContentDraggable._findVariableByTarget(content, dom.target(event));
+    if (context.variable) {
+      dom.cancel(event);
+      content.incrementDragCount();
+    }
   }
 
   onmove() { /* TODO */ }
 
-  onend(content) {
-    content.decrementDragCount();
+  onend(content, dx, dy, event, context) {
+    if (context.variable) {
+      content.decrementDragCount();
+    }
+  }
+
+  static _findVariableByTarget(content, target) {
+    if (!dom.hasClass(target, 'variable-header')) {
+      return null;
+    }
+    const name = dom.data(dom.parent(target), 'name');
+    return content.findVariable(name);
   }
 }

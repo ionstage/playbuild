@@ -14,6 +14,10 @@ export class dom {
     return el;
   }
 
+  static parent(el) {
+    return el.parentNode;
+  }
+
   static find(el, selectors) {
     return el.querySelector(selectors);
   }
@@ -40,6 +44,9 @@ export class dom {
   }
 
   static data(el, key, value) {
+    if (typeof value === 'undefined') {
+      return el.dataset[key];
+    }
     el.dataset[key] = value;
   }
 
