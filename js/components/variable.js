@@ -4,6 +4,7 @@ import { dom } from '../dom.js';
 export class Variable extends jCore.Component {
   constructor(props) {
     super();
+    this.top = this.prop(props.top);
     this._name = props.name;
     this._moduleName = props.moduleName;
     this._content = new VariableContent(dom.find(this.el, '.variable-content'));
@@ -37,6 +38,12 @@ export class Variable extends jCore.Component {
     dom.off(this._deleteButtonElement(), 'click', this._onclick_deleteButton);
   }
 
+  onredraw() {
+    this.redrawBy('top', top => {
+      dom.translateY(this.el, top);
+    });
+  }
+
   _toggleButtonElement() {
     return dom.find(this.el, '.variable-toggle-button');
   }
@@ -63,6 +70,7 @@ export class Variable extends jCore.Component {
   _onchange_toggleButton(event) {
     this._opened = dom.checked(dom.target(event));
     dom.toggleClass(this.el, 'open', this._opened);
+    this.emit('resize');
   }
 
   _onclick_deleteButton() {

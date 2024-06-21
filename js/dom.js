@@ -89,6 +89,10 @@ export class dom {
     return iframe.contentDocument.documentElement.scrollHeight;
   }
 
+  static translateY(el, y) {
+    el.style.transform = 'translateY(' + y + 'px)';
+  }
+
   static on(el, type, listener, useCapture) {
     el.addEventListener(type, listener, !!useCapture);
   }
