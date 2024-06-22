@@ -27,6 +27,10 @@ body {
   width: 100%;
 }
 
+.variable.dragging {
+  z-index: 1;
+}
+
 .variable-header {
   line-height: 30px;
 }

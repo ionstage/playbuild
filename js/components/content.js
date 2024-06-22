@@ -60,6 +60,10 @@ export class Content extends jCore.Component {
     }
   }
 
+  resize() {
+    this._onresize_variable();
+  }
+
   onredraw() {
     this.redrawBy('_height', height => {
       dom.css(this.el, { height: height + 'px' });
@@ -81,7 +85,9 @@ export class Content extends jCore.Component {
     }
     const m = Content._VARIABLE_MARGIN;
     const h = this._variables.reduce((t, v) => {
-      v.top(t);
+      if (!v.dragging()) {
+        v.top(t);
+      }
       return t + v.height() + m;
     }, m);
     this._height(h);
@@ -100,14 +106,23 @@ class ContentDraggable extends jCore.Draggable {
     if (context.variable) {
       dom.cancel(event);
       content.incrementDragCount();
+      context.top = context.variable.top();
     }
   }
 
-  onmove() { /* TODO */ }
+  onmove(content, dx, dy, event, context) {
+    if (context.variable) {
+      context.variable.dragging(true);
+      context.variable.top(context.top + dy);
+      // TODO: reorder variables
+    }
+  }
 
   onend(content, dx, dy, event, context) {
     if (context.variable) {
       content.decrementDragCount();
+      context.variable.dragging(false);
+      content.resize();
     }
   }
 

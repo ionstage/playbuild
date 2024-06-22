@@ -5,6 +5,7 @@ export class Variable extends jCore.Component {
   constructor(props) {
     super();
     this.top = this.prop(props.top);
+    this.dragging = this.prop(false);
     this._name = props.name;
     this._moduleName = props.moduleName;
     this._content = new VariableContent(dom.find(this.el, '.variable-content'));
@@ -41,6 +42,10 @@ export class Variable extends jCore.Component {
   onredraw() {
     this.redrawBy('top', top => {
       dom.translateY(this.el, top);
+    });
+
+    this.redrawBy('dragging', dragging => {
+      dom.toggleClass(this.el, 'dragging', dragging);
     });
   }
 
