@@ -20,7 +20,7 @@ export class Variable extends jCore.Component {
   }
 
   height() {
-    return (this._opened ? this._content.height() + Variable._HEIGHT_OFFSET_OPENED : Variable._HEIGHT_OFFSET_CLOSED);
+    return (this._opened && !this.dragging() ? this._content.height() + Variable._HEIGHT_OFFSET_OPENED : Variable._HEIGHT_OFFSET_CLOSED);
   }
 
   circuitModule() {

@@ -39,6 +39,10 @@ body {
   border-bottom: 1px solid #bdbdbd;
 }
 
+.variable.dragging > .variable-header {
+  border-bottom: 0;
+}
+
 .variable-header::after {
   clear: both;
   content: '.';
@@ -112,6 +116,10 @@ body {
 
 .variable.open > .variable-content {
   display: block;
+}
+
+.variable.dragging > .variable-content {
+  display: none;
 }
 
 .controls {
