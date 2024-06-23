@@ -34,6 +34,25 @@ export class Environment {
     return await Environment._EXEC_TABLE[':load'].call(this, filePath);
   }
 
+  reorderVariables(names) {
+    const len = names.length;
+    if (len !== this._variables.length) {
+      throw new Error('failed to reorder variables');
+    }
+    const from = this._variables.slice();
+    const to = new Array(len);
+    for (let i = 0; i < len; i++) {
+      const name = names[i];
+      const index = from.findIndex(v => (v && v.name === name));
+      if (index === -1) {
+        throw new Error('failed to reorder variables');
+      }
+      to[i] = from[index];
+      from[index] = null;
+    }
+    this._variables = to;
+  }
+
   _findVariable(name) {
     return this._variables.find(v => (v.name === name));
   }

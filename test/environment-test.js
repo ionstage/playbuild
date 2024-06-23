@@ -259,4 +259,33 @@ describe('Environment', () => {
       assert.strictEqual(f.mock.calls[0].arguments[0], '/path/to/script');
     });
   });
+
+  describe('#reorderVariables', () => {
+    it('reorder variables', async () => {
+      const env = TestEnvironment();
+      await env.exec([
+        ':new x Module',
+        ':new y Module',
+        ':new z Module',
+      ]);
+      const names = ['z', 'x', 'y'];
+      env.reorderVariables(names);
+      env._variables.forEach((v, i) => {
+        assert.strictEqual(v.name, names[i]);
+      });
+    });
+
+    it('reorder variables (error)', async() => {
+      const env = TestEnvironment();
+      await env.exec([
+        ':new x Module',
+        ':new y Module',
+        ':new z Module',
+      ]);
+      assert.throws(() => env.reorderVariables(['x']));
+      assert.throws(() => env.reorderVariables(['a', 'b', 'c']));
+      assert.throws(() => env.reorderVariables(['x', 'y', 'y']));
+      assert.throws(() => env.reorderVariables(['x', 'y', 'z', 'x']));
+    });
+  });
 });
