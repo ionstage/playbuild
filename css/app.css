@@ -28,6 +28,7 @@ body {
 }
 
 .variable.dragging {
+  opacity: .6;
   z-index: 1;
 }
 
