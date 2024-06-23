@@ -60,7 +60,18 @@ export class Content extends jCore.Component {
     }
   }
 
-  resize() {
+  moveVariable(variable, top) {
+    variable.top(top);
+    this._onresize_variable();
+  }
+
+  reorder() {
+    const names = this._variables.map(v => v.name());
+    const orderedNames = Content._reorderVariables(this._variables).map(v => v.name());
+    const reordered = !(orderedNames.every((n, i) => (n === names[i])));
+    if (reordered) {
+      this.emit('reorder-variables', orderedNames);
+    }
     this._onresize_variable();
   }
 
@@ -84,7 +95,7 @@ export class Content extends jCore.Component {
       return;
     }
     const m = Content._VARIABLE_MARGIN;
-    const h = this._variables.reduce((t, v) => {
+    const h = Content._reorderVariables(this._variables.slice()).reduce((t, v) => {
       if (!v.dragging()) {
         v.top(t);
       }
@@ -94,6 +105,17 @@ export class Content extends jCore.Component {
   }
 
   static _VARIABLE_MARGIN = 24;
+
+  static _reorderVariables(variables) {
+    return variables.sort((a, b) => {
+      const at = a.top();
+      const bt = b.top();
+      if (at - bt === 0) {
+        return (a.dragging() ? -1 : (b.dragging() ? 1 : 0));
+      }
+      return at - bt;
+    });
+  }
 }
 
 class ContentDraggable extends jCore.Draggable {
@@ -113,8 +135,7 @@ class ContentDraggable extends jCore.Draggable {
   onmove(content, dx, dy, event, context) {
     if (context.variable) {
       context.variable.dragging(true);
-      context.variable.top(context.top + dy);
-      // TODO: reorder variables
+      content.moveVariable(context.variable, context.top + dy);
     }
   }
 
@@ -122,7 +143,7 @@ class ContentDraggable extends jCore.Draggable {
     if (context.variable) {
       content.decrementDragCount();
       context.variable.dragging(false);
-      content.resize();
+      content.reorder();
     }
   }
 
