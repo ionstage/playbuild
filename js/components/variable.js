@@ -36,6 +36,7 @@ export class Variable extends jCore.Component {
   }
 
   unload() {
+    dom.off(this._toggleButtonElement(), 'change', this._onchange_toggleButton);
     dom.off(this._deleteButtonElement(), 'click', this._onclick_deleteButton);
   }
 
