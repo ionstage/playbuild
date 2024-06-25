@@ -37,7 +37,7 @@ export class Command {
     const index = tokens.indexOf('#');
     return (index !== -1 ? tokens.slice(0, index) : tokens);
   }
-  
+
   static _makeNodes(tokens) {
     const nodes = tokens.slice();
     if (nodes[0] === ':' && nodes.length >= 2) {
@@ -55,7 +55,7 @@ export class Command {
     }
     return nodes;
   }
-  
+
   static _isValidNodes(nodes) {
     switch (nodes[0]) {
       case ':new':
@@ -76,7 +76,7 @@ export class Command {
         return (nodes.length === 0);
     }
   }
-  
+
   static _makeArgs(nodes) {
     return nodes.filter(node => {
       return (node !== '.');
