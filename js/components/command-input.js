@@ -4,6 +4,9 @@ import { dom } from '../dom.js';
 export class CommandInput extends jCore.Component {
   constructor(el) {
     super(el);
+    this.disabled = this.prop(false);
+    this._needsFocus = false;
+    this._needsBlur = false;
     this._history = new CommandInputHistory({
       size: 100,
       key: 'playbuild/input-history',
@@ -11,16 +14,32 @@ export class CommandInput extends jCore.Component {
     this._oninit();
   }
 
-  disabled(value) {
-    dom.disabled(this.el, value);
-  }
-
   focus() {
-    dom.focus(this.el);
+    this._needsFocus = true;
+    this._needsBlur = false;
+    this.markDirty();
   }
 
   blur() {
-    dom.blur(this.el);
+    this._needsFocus = false;
+    this._needsBlur = true;
+    this.markDirty();
+  }
+
+  onredraw() {
+    this.redrawBy('disabled', disabled => {
+      dom.disabled(this.el, disabled);
+    });
+
+    if (this._needsFocus) {
+      dom.focus(this.el);
+      this._needsFocus = false;
+    }
+
+    if (this._needsBlur) {
+      dom.blur(this.el);
+      this._needsBlur = false;
+    }
   }
 
   _text(value) {
