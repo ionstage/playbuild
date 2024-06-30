@@ -30,7 +30,8 @@
 
     const dataArgs = {
       text(value) {
-        value = (value != null ? String(value) : text);
+        // get the first line
+        value = (value != null ? String(value).match(/.*/)[0] : text);
         if (value !== text) {
           text = value;
           textInputElement.value = value;
