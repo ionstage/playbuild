@@ -30,11 +30,14 @@
 
     const dataArgs = {
       text(value) {
+        if (value == null || value === text) {
+          return text;
+        }
         // get the first line
-        value = (value != null ? String(value).match(/.*/)[0] : text);
-        if (value !== text) {
-          text = value;
-          textInputElement.value = value;
+        const s = String(value).match(/.*/)[0];
+        if (s !== text) {
+          text = s;
+          textInputElement.value = text;
           module.get('change')();
         }
         return text;
@@ -56,9 +59,9 @@
     });
 
     textInputElement.addEventListener('input', event => {
-      const value = event.target.value;
-      if (value !== text) {
-        text = value;
+      const s = event.target.value;
+      if (s !== text) {
+        text = s;
         module.get('text')(text);
         module.get('change')();
       }
