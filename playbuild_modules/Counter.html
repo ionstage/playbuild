@@ -30,9 +30,12 @@
 
     const dataArgs = {
       count(value) {
-        value = parseInt((isFinite(value) ? Number(value) : count), 10);
-        if (value !== count) {
-          count = value;
+        if (value == null || value === count) {
+          return count;
+        }
+        const n = parseInt((isFinite(value) ? Number(value) : count), 10);
+        if (n !== count) {
+          count = n;
           contentElement.textContent = count;
         }
         return count;
