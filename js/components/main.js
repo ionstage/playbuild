@@ -42,7 +42,7 @@ export class Main extends jCore.Component {
       this._commandInput.blur();
       return this._fileInput.load();
     }
-    const res = await fetch('playbuild_scripts/' + path);
+    const res = await fetch(`playbuild_scripts/${path}`);
     if (!res.ok) {
       throw new Error(res.statusText);
     }

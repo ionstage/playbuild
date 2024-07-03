@@ -3,7 +3,7 @@ export class Command {
     const tokens = Command._tokenize(s);
     const nodes = Command._makeNodes(tokens);
     if (!Command._isValidNodes(nodes)) {
-      throw new SyntaxError('PlayBuildScript parse error: Unexpected identifier "' +  s + '"');
+      throw new SyntaxError(`PlayBuildScript parse error: Unexpected identifier "${s}"`);
     }
     return Command._makeArgs(nodes);
   }
@@ -22,7 +22,7 @@ export class Command {
       }
     }
     if (doubleQuoted || singleQuoted) {
-      throw new SyntaxError('PlayBuildScript parse error: Invalid command line string "' +  s + '"');
+      throw new SyntaxError(`PlayBuildScript parse error: Invalid command line string "${s}"`);
     }
     if (s[s.length - 1] !== ';') {
       indexes.push(s.length);
@@ -42,7 +42,7 @@ export class Command {
     const nodes = tokens.slice();
     if (nodes[0] === ':' && nodes.length >= 2) {
       nodes.shift();
-      nodes[0] = ':' + nodes[0].toLowerCase();
+      nodes[0] = `:${nodes[0].toLowerCase()}`;
     } else if (nodes[1] === ':') {
       nodes.splice(1, 1);
       nodes.unshift(':new');

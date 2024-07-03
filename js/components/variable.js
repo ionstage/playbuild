@@ -63,12 +63,12 @@ export class Variable extends jCore.Component {
   }
 
   _contentUrl() {
-    return 'playbuild_modules/' + encodeURI(this._moduleName) + '.html';
+    return `playbuild_modules/${encodeURI(this._moduleName)}.html`;
   }
 
   _oninit() {
     dom.data(this.el, 'name', this._name);
-    dom.text(this._nameElement(), this._name + ':' + this._moduleName);
+    dom.text(this._nameElement(), `${this._name}:${this._moduleName}`);
     dom.on(this._toggleButtonElement(), 'change', this._onchange_toggleButton);
     dom.on(this._deleteButtonElement(), 'click', this._onclick_deleteButton);
   }
@@ -137,7 +137,7 @@ class VariableContent extends jCore.Component {
       throw new Error('PlayBuildScript runtime error: Invalid circuit module');
     }
     this._height = dom.contentHeight(this.el);
-    dom.css(this.el, { height: this._height + 'px' });
+    dom.css(this.el, { height: `${this._height}px` });
   }
 
   _contentWindow() {

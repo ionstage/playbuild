@@ -77,7 +77,7 @@ export class Content extends jCore.Component {
 
   onredraw() {
     this.redrawBy('_height', height => {
-      dom.css(this.el, { height: height + 'px' });
+      dom.css(this.el, { height: `${height}px` });
     });
 
     this.redrawBy('_dragCount', dragCount => {

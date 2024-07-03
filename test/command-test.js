@@ -61,7 +61,7 @@ describe('Command', () => {
       [':send x.member0 ">>y.member1"', [':send', 'x', 'member0', '>>y.member1']],
       [':send x.member0 "<<"', [':send', 'x', 'member0', '<<']],
     ].forEach(p => {
-      it('"' + p[0] + '"', () => {
+      it(`"${p[0]}"`, () => {
         assert.deepStrictEqual(Command.parse(p[0]), p[1]);
       });
     });
@@ -106,7 +106,7 @@ describe('Command', () => {
       ':load x y',
       ':save x y',
     ].forEach(p => {
-      it('"' + p + '"', () => {
+      it(`"${p}"`, () => {
         assert.throws(() => Command.parse(p), SyntaxError);
       });
     });
@@ -124,7 +124,7 @@ describe('Command', () => {
       [':new x Module ; :new y Module;', [':new x Module ', ' :new y Module']],
       [':new x Module;:send x.member0 "data;text"', [':new x Module', ':send x.member0 "data;text"']],
     ].forEach(p => {
-      it('"' + p[0] + '"', () => {
+      it(`"${p[0]}"`, () => {
         assert.deepStrictEqual(Command.parseList(p[0]), p[1]);
       });
     });
@@ -135,7 +135,7 @@ describe('Command', () => {
       ':new x Module;:send x.member0 "data;text',
       ':new x Module;:send x.member0 \'data;text',
     ].forEach(p => {
-      it('"' + p + '"', () => {
+      it(`"${p}"`, () => {
         assert.throws(() => Command.parseList(p), SyntaxError);
       });
     });

@@ -90,7 +90,7 @@ export class dom {
   }
 
   static translateY(el, y) {
-    el.style.transform = 'translateY(' + y + 'px)';
+    el.style.transform = `translateY(${y}px)`;
   }
 
   static on(el, type, listener, useCapture) {
@@ -125,7 +125,7 @@ export class dom {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       const onfailed = () => {
-        reject(new Error('Failed to read file: ' + file.name));
+        reject(new Error(`Failed to read file: ${file.name}`));
       };
       reader.onload = event => {
         resolve(event.target.result);

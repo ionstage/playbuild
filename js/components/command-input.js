@@ -59,7 +59,7 @@ export class CommandInput extends jCore.Component {
     const key = CommandInput._KEY_DOWN_MAP[event.which];
     if (key) {
       this._isError(false);
-      this['_on' + key](event);
+      this[`_on${key}`](event);
     }
   }
 

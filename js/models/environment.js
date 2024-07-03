@@ -72,11 +72,11 @@ export class Environment {
   _fetchMember(variableName, memberName) {
     const v = this._findVariable(variableName);
     if (!v) {
-      throw new Error('PlayBuildScript runtime error: variable "' + variableName + '" is not defined');
+      throw new Error(`PlayBuildScript runtime error: variable "${variableName}" is not defined`);
     }
     const m = v.circuitModule.get(memberName);
     if (!m) {
-      throw new Error('PlayBuildScript runtime error: member "' + variableName + '.' + memberName + '" is not defined');
+      throw new Error(`PlayBuildScript runtime error: member "${variableName}.${memberName}" is not defined`);
     }
     return m;
   }
@@ -137,7 +137,7 @@ export class Environment {
 
   _generateScript() {
     const variableScript = this._variables.map(v => {
-      let c = v.name + ':' + v.moduleName;
+      let c = `${v.name}:${v.moduleName}`;
       const s = v.circuitModule.serialize();
       if (s != null) {
         c += ` '${s.replace(/'/g, '\\\'')}'`;
@@ -145,16 +145,18 @@ export class Environment {
       return c;
     }).join('\n');
     const bindingScript = this._bindings.map(b => {
-      return (this._findVariableByMember(b.sourceMember).name + '.' + b.sourceMember.name + ' >> ' +
-              this._findVariableByMember(b.targetMember).name + '.' + b.targetMember.name);
+      const l = `${this._findVariableByMember(b.sourceMember).name}.${b.sourceMember.name}`;
+      const r = `${this._findVariableByMember(b.targetMember).name}.${b.targetMember.name}`;
+      return `${l} >> ${r}`;
     }).join('\n');
-    return (variableScript + '\n' + bindingScript).trim() + '\n';
+    const s = `${variableScript}\n${bindingScript}`.trim();
+    return `${s}\n`;
   }
 
   static _EXEC_TABLE = {
     ':new'(variableName, moduleName, dataText) {
       if (this._findVariable(variableName)) {
-        throw new Error('PlayBuildScript runtime error: variable "' + variableName + '" is already defined');
+        throw new Error(`PlayBuildScript runtime error: variable "${variableName}" is already defined`);
       }
       return this._loadVariable(variableName, moduleName, dataText);
     },
@@ -173,7 +175,7 @@ export class Environment {
     },
     ':delete'(variableName) {
       if (!this._findVariable(variableName)) {
-        throw new Error('PlayBuildScript runtime error: variable "' + variableName + '" is not defined');
+        throw new Error(`PlayBuildScript runtime error: variable "${variableName}" is not defined`);
       }
       return this._unloadVariable(variableName);
     },

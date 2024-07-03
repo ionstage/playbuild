@@ -231,7 +231,7 @@ describe('Environment', () => {
       const f = mock.fn(async () => {});
       const env = TestEnvironment({ circuitModuleLoader: async () => m, scriptSaver: f });
       await env.exec([
-        ':new x Module ' + s,
+        `:new x Module ${s}`,
         ':save /path/to/script',
       ]);
       assert.strictEqual(f.mock.calls[0].arguments[0], '/path/to/script');
