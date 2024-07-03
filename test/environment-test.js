@@ -209,13 +209,20 @@ describe('Environment', () => {
 
     it('save command', async () => {
       const f = mock.fn(async () => {});
-      const env = TestEnvironment({ scriptSaver: f });
+      const env = TestEnvironment({
+        circuitModuleLoader: async () => {
+          return new CircuitModule.PlayBuildModule([{ name: 'a', type: 'data' }]);
+        },
+        scriptSaver: f,
+      });
       await env.exec([
         ':new x Module',
+        ':new y Module',
+        ':bind x.a y.a',
         ':save /path/to/script',
       ]);
       assert.strictEqual(f.mock.calls[0].arguments[0], '/path/to/script');
-      assert.strictEqual(f.mock.calls[0].arguments[1], 'x:Module\n');
+      assert.strictEqual(f.mock.calls[0].arguments[1], 'x:Module\ny:Module\nx.a >> y.a\n');
     });
 
     it('save command with variables data', async () => {
