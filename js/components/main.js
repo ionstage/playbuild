@@ -21,9 +21,9 @@ export class Main extends jCore.Component {
     this._oninit();
   }
 
-  async loadInitScript() {
+  async loadScript(filePath) {
     this._commandInput.disabled(true);
-    await this._env.loadScript('init.pb');
+    await this._env.loadScript(filePath);
     this._commandInput.disabled(false);
   }
 

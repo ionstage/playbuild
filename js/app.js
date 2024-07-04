@@ -5,4 +5,4 @@ import { Main } from './components/main.js';
 dom.export('PlayBuildModule', CircuitModule.PlayBuildModule);
 
 const main = new Main(dom.body());
-main.loadInitScript();
+main.loadScript('init.pb');
