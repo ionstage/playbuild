@@ -140,6 +140,12 @@ export class dom {
     return file.name;
   }
 
+  static urlQuery(url, key) {
+    const u = new URL(url);
+    const s = new URLSearchParams(u.search);
+    return s.get(key);
+  }
+
   static load(key, defaultValue) {
     return JSON.parse(localStorage.getItem(key)) || defaultValue;
   }
