@@ -141,8 +141,7 @@ export class dom {
   }
 
   static urlQuery(url, key) {
-    const u = new URL(url);
-    const s = new URLSearchParams(u.search);
+    const s = new URLSearchParams(url.search);
     return s.get(key);
   }
 
