@@ -140,6 +140,10 @@ export class dom {
     return file.name;
   }
 
+  static location() {
+    return document.location;
+  }
+
   static urlQuery(url, key) {
     const s = new URLSearchParams(url.search);
     return s.get(key);
