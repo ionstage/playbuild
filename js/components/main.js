@@ -23,7 +23,13 @@ export class Main extends jCore.Component {
 
   async loadStartupScript() {
     this._commandInput.disabled(true);
-    await this._env.loadScript('init.pb');
+    const demo = dom.urlQuery(dom.location(), 'demo');
+    const filePath = (demo !== null ? `demo/${demo}.pb` : 'init.pb');
+    try {
+      await this._env.loadScript(filePath);
+    } catch (e) {
+      console.error(e);
+    }
     this._commandInput.disabled(false);
   }
 
