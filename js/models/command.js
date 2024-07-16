@@ -15,7 +15,7 @@ export class Command {
     for (let i = 0; i < s.length; i++) {
       if (s[i] === '"' && s[i-1] !== '\\' && !singleQuoted) {
         doubleQuoted = !doubleQuoted;
-      } else if (s[i] === "'" && s[i-1] !== '\\' && !doubleQuoted) {
+      } else if (s[i] === '\'' && s[i-1] !== '\\' && !doubleQuoted) {
         singleQuoted = !singleQuoted;
       } else if (s[i] === ';' && !singleQuoted && !doubleQuoted) {
         indexes.push(i);
