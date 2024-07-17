@@ -117,6 +117,10 @@ export class dom {
     return event.target;
   }
 
+  static key(event) {
+    return event.key;
+  }
+
   static cancel(event) {
     event.preventDefault();
   }
