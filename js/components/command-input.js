@@ -56,7 +56,7 @@ export class CommandInput extends jCore.Component {
   }
 
   _onkeydown(event) {
-    const key = CommandInput._KEY_DOWN_MAP[event.which];
+    const key = CommandInput._KEY_DOWN_MAP[dom.key(event)];
     if (key) {
       this._isError(false);
       this[`_on${key}`](event);
@@ -96,9 +96,9 @@ export class CommandInput extends jCore.Component {
   }
 
   static _KEY_DOWN_MAP = {
-    13: 'enter',
-    38: 'up',
-    40: 'down',
+    Enter: 'enter',
+    ArrowUp: 'up',
+    ArrowDown: 'down',
   };
 }
 
