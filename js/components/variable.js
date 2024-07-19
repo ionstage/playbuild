@@ -118,7 +118,7 @@ class VariableContent extends jCore.Component {
   }
 
   circuitModule() {
-    const playbuild = this._contentWindow().playbuild;
+    const playbuild = this._contentWindow().playbuild || null;
     return (playbuild && playbuild.exports);
   }
 
@@ -128,7 +128,9 @@ class VariableContent extends jCore.Component {
       dom.once(this.el, 'load', () => {
         clearTimeout(timeoutID);
         const circuitModule = this.circuitModule();
-        circuitModule.deserialize(dataText);
+        if (circuitModule) {
+          circuitModule.deserialize(dataText);
+        }
         resolve(circuitModule);
       });
       dom.attr(this.el, { src: url });
