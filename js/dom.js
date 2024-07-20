@@ -93,18 +93,18 @@ export class dom {
     el.style.transform = `translateY(${y}px)`;
   }
 
-  static on(el, type, listener, useCapture) {
-    el.addEventListener(type, listener, !!useCapture);
+  static on(el, ...args) {
+    el.addEventListener(...args);
   }
 
-  static off(el, type, listener, useCapture) {
-    el.removeEventListener(type, listener, !!useCapture);
+  static off(el, ...args) {
+    el.removeEventListener(...args);
   }
 
   static once(el, type, listener, useCapture) {
     const wrapper = (...args) => {
       dom.off(el, type, wrapper, useCapture);
-      listener.apply(null, args);
+      listener(...args);
     };
     dom.on(el, type, wrapper, useCapture);
   }
