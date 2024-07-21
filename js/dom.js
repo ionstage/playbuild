@@ -102,11 +102,10 @@ export class dom {
   }
 
   static once(el, type, listener, useCapture) {
-    const wrapper = (...args) => {
-      dom.off(el, type, wrapper, useCapture);
-      listener(...args);
-    };
-    dom.on(el, type, wrapper, useCapture);
+    el.addEventListener(type, listener, {
+      capture: (typeof useCapture !== 'undefined' ? useCapture : false),
+      once: true,
+    });
   }
 
   static click(el) {
