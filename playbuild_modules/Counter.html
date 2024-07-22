@@ -11,7 +11,7 @@
     #content {
       box-sizing: border-box;
       color: #212121;
-      font-family: monospace;
+      font-family: Courier, monospace;
       font-size: 42px;
       height: 48px;
       line-height: 48px;
@@ -30,9 +30,12 @@
 
     const dataArgs = {
       count(value) {
-        value = parseInt((!isNaN(value) ? Number(value) : count), 10);
-        if (value !== count) {
-          count = value;
+        if (value == null || value === count) {
+          return count;
+        }
+        const n = parseInt((isFinite(value) ? Number(value) : count), 10);
+        if (n !== count) {
+          count = n;
           contentElement.textContent = count;
         }
         return count;

@@ -6,14 +6,19 @@
   <style>
     body {
       margin: 0;
+      touch-action: manipulation;
     }
 
     #text-input {
+      appearance: none;
+      border: 2px solid #d5d5d5;
       border-radius: 0;
       box-sizing: border-box;
       color: #212121;
+      font-family: Courier, monospace;
       font-size: 14px;
       height: 28px;
+      outline: 0;
       padding: 0 4px;
       width: 100%;
     }
@@ -25,11 +30,15 @@
 
     const dataArgs = {
       text(value) {
-        value = (value != null ? String(value) : text);
-        if (value !== text) {
+        if (value == null || value === text) {
+          return text;
+        }
+        // get the first line
+        const s = String(value).match(/.*/)[0];
+        if (s !== text) {
+          text = s;
+          textInputElement.value = text;
           module.get('change')();
-          text = value;
-          textInputElement.value = value;
         }
         return text;
       },
@@ -38,14 +47,23 @@
     const module = new playbuild.Module([
       { name: 'text', type: 'data', arg: dataArgs.text },
       { name: 'change', type: 'event' },
-    ]);
+    ], {
+      serialize: function() {
+        return text;
+      },
+      deserialize: function(s) {
+        text = s;
+        textInputElement.value = text;
+        module.get('text')(text);
+      },
+    });
 
     textInputElement.addEventListener('input', event => {
-      const value = event.target.value;
-      if (value !== text) {
-        module.get('change')();
-        text = value;
+      const s = event.target.value;
+      if (s !== text) {
+        text = s;
         module.get('text')(text);
+        module.get('change')();
       }
     });
 
